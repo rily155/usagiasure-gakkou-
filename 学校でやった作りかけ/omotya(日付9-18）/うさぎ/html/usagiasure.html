@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>うさぎのアスレチック</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        <div id="ui-container">
+            <div id="life-container">
+                <span id="life-count">5</span>
+            </div>
+            <div id="carrot-count-container">
+                <img src="carrot.png" alt="にんじん" width="20" height="20">
+                <span id="carrot-count">0</span>
+            </div>
+        </div>
+        <div id="start-screen" class="screen">
+            <div class="page" id="page-1">
+                <h2>操作方法</h2>
+                <div class="instruction">
+                    <img src="arrow-keys.png" alt="矢印キー">
+                    <p>左右矢印キー：移動</p>
+                </div>
+                <div class="instruction">
+                    <img src="space-key.png" alt="スペースキー">
+                    <p>スペースキー：ジャンプ</p>
+                </div>
+                <button onclick="nextPage()">次へ</button>
+            </div>
+            <div class="page" id="page-2" style="display: none;">
+                <h2>ゴール</h2>
+                <div class="instruction">
+                    <img src="star.png" alt="星">
+                    <p>星に触れるとクリア！</p>
+                </div>
+                <button onclick="nextPage()">次へ</button>
+            </div>
+            <div class="page" id="page-3" style="display: none;">
+                <h2>メッセージ</h2>
+                <p>楽しんでね！</p>
+                <button onclick="startGame()">ゲームスタート</button>
+            </div>
+        </div>
+        <div id="clear-screen" class="screen" style="display: none;">
+            <img src="clear.png" alt="✨clear✨">
+            <button onclick="resetGame()">もう一度遊ぶ</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
