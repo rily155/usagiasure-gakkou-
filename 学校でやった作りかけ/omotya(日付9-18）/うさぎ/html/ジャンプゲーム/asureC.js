@@ -2,15 +2,15 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 // --- 画像の読み込み設定（フォルダー構成に合わせてパスを  に修正） ---
-const imgUsagiHokou1 = new Image(); imgUsagiHokou1.src = "usagi_hokou1.png";
-const imgUsagiHokou2 = new Image(); imgUsagiHokou2.src = "usagi_hokou2.png";
-const imgUsagiTaiki1 = new Image(); imgUsagiTaiki1.src = "usagi_taiki1.png";
-const imgUsagiTaiki2 = new Image(); imgUsagiTaiki2.src = "usagi_taiki2.png";
-const imgAshiba      = new Image(); imgAshiba.src = "asiba.png";
-const imgHoshi       = new Image(); imgHoshi.src = "go-ru.png";
-const imgHaikei      = new Image(); imgHaikei.src = "haikei.png";
-const imgNaraku      = new Image(); imgNaraku.src = "naraku.png";
-const imgNinnzinn    = new Image(); imgNinnzinn.src = "ninnzinn.png";
+const imgUsagiHokou1 = new Image(); imgUsagiHokou1.src = "images/usagi_hokou1.png";
+const imgUsagiHokou2 = new Image(); imgUsagiHokou2.src = "images/usagi_hokou2.png";
+const imgUsagiTaiki1 = new Image(); imgUsagiTaiki1.src = "images/usagi_taiki1.png";
+const imgUsagiTaiki2 = new Image(); imgUsagiTaiki2.src = "images/usagi_taiki2.png";
+const imgAshiba      = new Image(); imgAshiba.src = "images/asiba.png";
+const imgHoshi       = new Image(); imgHoshi.src = "images/go-ru.png";
+const imgHaikei      = new Image(); imgHaikei.src = "images/haikei.png";
+const imgNaraku      = new Image(); imgNaraku.src = "images/naraku.png";
+const imgNinnzinn    = new Image(); imgNinnzinn.src = "images/ninnzinn.png";
 
 // --- 初期画面・説明ページの制御 ---
 let currentGuidePage = 1;
@@ -215,9 +215,17 @@ let carrots = [
 const goalStar = { x: 300, y: 25, w: 75, h: 75 };
 
 // 判定関数
+// 猫ゲームを参考に、キャラクター画像の透明な余白を避けた内側の当たり判定を使う
 function checkCollision(rect1, rect2) {
-    return rect1.x < rect2.x + rect2.w && rect1.x + rect1.width > rect2.x &&
-           rect1.y < rect2.y + rect2.h && rect1.y + rect1.height > rect2.y;
+    const insetX = 8;
+    const insetTop = 8;
+    const insetBottom = 4;
+    const px = rect1.x + insetX;
+    const py = rect1.y + insetTop;
+    const pw = rect1.width - insetX * 2;
+    const ph = rect1.height - insetTop - insetBottom;
+    return px < rect2.x + rect2.w && px + pw > rect2.x &&
+           py < rect2.y + rect2.h && py + ph > rect2.y;
 }
 
 // ゲーム開始ボタンを押した時
@@ -236,18 +244,25 @@ function restartGame() {
 // メインループ
 function gameLoop() {
     if (isPlaying) {
-        // 更新
+        // 移動前の足元を保存し、猫ゲームと同様に「上から着地した場合だけ」足場に乗せる
+        const oldBottom = player.y + player.height;
         player.update();
 
-        // コリジョン判定（足場の上に乗る）
         player.isGrounded = false;
-        platforms.forEach(pf => {
-            if (player.x + player.width - 10 > pf.x && player.x + 10 < pf.x + pf.w) {
-                if (player.vy >= 0 && player.y + player.height >= pf.y && player.y + player.height - player.vy <= pf.y + 10) {
-                    player.y = pf.y - player.height; player.vy = 0; player.isGrounded = true;
+        if (player.vy >= 0) {
+            for (const pf of platforms) {
+                const hitLeft = player.x + 8;
+                const hitRight = player.x + player.width - 8;
+                const overlapsHorizontally = hitRight > pf.x && hitLeft < pf.x + pf.w;
+                const crossedTop = oldBottom <= pf.y + 8 && player.y + player.height >= pf.y;
+                if (overlapsHorizontally && crossedTop) {
+                    player.y = pf.y - player.height;
+                    player.vy = 0;
+                    player.isGrounded = true;
+                    break;
                 }
             }
-        });
+        }
 
         // にんじん取得判定（消えてライフが1つ回復）
         carrots.forEach(c => {
