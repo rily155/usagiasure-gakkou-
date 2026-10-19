@@ -4,12 +4,12 @@ const ctx = canvas.getContext('2d');
 // --- 1. 画像の読み込み（エラーが起きてもゲームを止めない対策付き） ---
 let imagesLoaded = { bg: false, player: false, platform: false, abyss: false, goal: false };
 
-const imgBg = new Image();       imgBg.src = ;
-const imgPlayer = new Image();   imgPlayer.src = ;
-const imgPlatform = new Image(); imgPlatform.src = ;
-const imgAbyss = new Image();    imgAbyss.src = ;
-const imgGoalStar = new Image(); imgGoalStar.src = ; 
-const imgWalk1 = new Image();   imgPlayer.src = ;
+const imgBg = new Image();       imgBg.src = "";
+const imgPlayer = new Image();   imgPlayer.src = "";
+const imgPlatform = new Image(); imgPlatform.src = "";
+const imgAbyss = new Image();    imgAbyss.src = "";
+const imgGoalStar = new Image(); imgGoalStar.src = ""; 
+const imgWalk1 = new Image();   imgPlayer.src = "";
 const imgWalk2 = new Image();   imgPlayer.src = "../images/ninnzinn.png";
 
 // 画像が読み込めたらフラグを真（true）にする

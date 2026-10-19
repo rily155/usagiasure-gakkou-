@@ -636,3 +636,13 @@ header h1 {
     border-radius: 20px;
     font-weight: bold;
 }
+// 奈落へ落下
+        if (player.y > canvas.height) {
+            player.life--;
+            if (player.life <= 0) {
+                player.init();
+                carrots.forEach(c => c.active = true);
+            } else {
+                player.x = 80; player.y = 300; player.vy = 0;
+            }
+        }

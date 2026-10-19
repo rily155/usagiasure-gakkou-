@@ -68,7 +68,7 @@ const keys = { ArrowLeft: false, ArrowRight: false, Space: false };
 
 // --- プレイヤー（うさぎ）システム ---
 const player = {
-    x: 80, y: 300, width: 44, height: 72,
+    x: 8, y: 300, width: 33, height: 54,
     vx: 0, vy: 0, speed: 4, jumpForce: -12, gravity: 0.5,
     isGrounded: false, life: 5, maxLife: 5,
     facing: "right",
@@ -197,22 +197,22 @@ function gameLoop() {
 // --- 足場データ（5番目の画像を一部分ずつ切り取って使用：sx, sy, sw, sh） ---
 const platforms = [
     { x: 0,   y: 10, w: 200, h: 40, sx: 0,   sy: 0,   sw: 200, sh: 40 }, 
-    { x: 400, y: 400, w: 200, h: 50, sx:600, sy: 165,  sw: 400, sh: 100 },
-    { x: 50, y: 400, w: 100, h: 150, sx: 720, sy: 570,  sw: 100, sh: 150 },
-    { x: 230, y: 210, w: 140, h: 30, sx: 100, sy: 150, sw: 140, sh: 30 },
-    { x: 50,  y: 140, w: 100, h: 30, sx: 0,   sy: 200, sw: 100, sh: 30 },
-    { x: 620, y: 160, w: 180, h: 40, sx: 400, sy: 0,   sw: 180, sh: 40 }
+    { x: -50, y: 375, w: 200, h: 50, sx:600, sy: 165,  sw: 400, sh: 100 },
+    { x: 300, y: 300, w: 45, h: 75, sx: 720, sy: 574,  sw: 90, sh: 150 },
+    { x: 400, y: 175, w: 47.5, h: 50, sx: 520, sy: 586, sw: 95, sh: 100 },
+    { x: 50,  y: 150, w: 100, h: 150, sx: 620,   sy: 574, sw: 100, sh: 150 },
+    { x: 0, y: 150, w: 180, h: 100, sx: 700, sy: 46,   sw: 180, sh: 100 }
 ];
 
 // --- にんじんデータ ---
 let carrots = [
-    { x: 310, y: 340, w: 30, h: 30, active: true },
-    { x: 520, y: 260, w: 30, h: 30, active: true },
+    { x: 210, y: 340, w: 30, h: 30, active: true },
+    { x: 320, y: 260, w: 30, h: 30, active: true },
     { x: 80,  y: 90,  w: 30, h: 30, active: true }
 ];
 
 // --- ゴール（星）データ ---
-const goalStar = { x: 700, y: 90, w: 50, h: 50 };
+const goalStar = { x: 300, y: 25, w: 75, h: 75 };
 
 // 判定関数
 function checkCollision(rect1, rect2) {
@@ -263,12 +263,14 @@ function gameLoop() {
             document.getElementById("clear-screen").style.display = "flex";
         }
 
-        // 奈落へ落下
+        // 落下判定＆ゲームオーバー処理
         if (player.y > canvas.height) {
             player.life--;
             if (player.life <= 0) {
-                player.init();
-                carrots.forEach(c => c.active = true);
+                player.life = 0;
+                isPlaying = false;
+                isGameover = true;
+                document.getElementById("gameover-screen").style.display = "flex";
             } else {
                 player.x = 80; player.y = 300; player.vy = 0;
             }
@@ -292,7 +294,7 @@ function gameLoop() {
     if (isPlaying) player.draw();
 
     // 最下部に奈落のグラフィックを描画
-    ctx.drawImage(imgNaraku, 0, canvas.height - 20, canvas.width, 20);
+    ctx.drawImage(imgNaraku, 0, canvas.height -200, canvas.width, 200);
 
     // UI表示
     if (isPlaying) {
@@ -302,6 +304,7 @@ function gameLoop() {
     }
 
     requestAnimationFrame(gameLoop);
+    
 }
 
 // キー入力制御
