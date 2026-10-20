@@ -1,0 +1,648 @@
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let imagesLoaded = { bg: false, player: false, platform: false, abyss: false, goal: false };
+// --- 1. 画像の読み込み設定 ---
+const imgBg = new Image();     imgBg.src = 'Gemini_Generated_Image_kGemini_Generated_Image_yh8jd8yh8jd8yh8j.pngwnjagkwnjagkwnj.png';
+const imgPlayer = new Image(); imgPlayer.src = 'Gemini_Generated_Image_yqvlqeyqvlqeyqvl.png';
+const imgPlatform = new Image(); imgPlatform.src = 'Gemini_Generated_Image_9wx5gr9wx5gr9wx5.png';
+const imgAbyss = new Image();    imgAbyss.src = 'Gemini_Generated_Image_yh8jd8yh8jd8yh8j.png';
+const imgGoalStar = new Image();    imgGoalStar.src = 'Gemini_Generated_Image_fjn93ufjn93ufjn9.png';
+
+imgBg.onload = () => imagesLoaded.bg = true;
+imgPlayer.onload = () => imagesLoaded.player = true;
+imgPlatform.onload = () => imagesLoaded.platform = true;
+imgAbyss.onload = () => imagesLoaded.abyss = true;
+imgGoalStar.onload = () => imagesLoaded.goal = true;
+// --- 2. ゲームのデータ設定 ---
+let player = { 
+    x: 0, y: 0, w: 200, h: 200, // うさぎのサイズ
+    dy: 0, jump: -12, speed: 4, onGround: false 
+};
+let gravity = 0.6;
+let scrollX = 0;
+let score = 0;
+let lives = 5;
+let isGameClear = false;
+
+// さっき抜き出した「足場画像（platforms.png）」から、どの部分を切り取ってどこに配置するかを指定します
+// sx, sy, sw, sh = 画像の中の切り取り位置とサイズ / x, y, w, h = ゲーム画面内での配置位置とサイズ
+let mapObjects = [
+    // スタート地点の雲の足場
+    { sx: 15, sy: 720, sw: 180, sh: 100, x: 0, y: 320, w: 180, h: 80 },
+    // 途中の浮いている雲
+    { sx: 10, sy: 260, sw: 190, sh: 120, x: 240, y: 240, w: 150, h: 90 },
+    // 結晶のついた雲
+    { sx: 820, sy: 260, sw: 180, sh: 180, x: 460, y: 160, w: 150, h: 150 },
+    // 小さなピンクの雲
+    { sx: 660, sy: 300, sw: 140, sh: 80,  x: 680, y: 260, w: 100, h: 60 },
+    // ゴール地点の大きな星つきの雲
+    { sx: 720, sy: 700, sw: 280, sh: 140, x: 880, y: 280, w: 250, h: 120 }
+];
+  
+// --- ⭐ 星（ゴール）の配置データ ---
+// 一番右の足場（x: 880）の上に、50×50マスの大きさで設置します
+let goal = { x: 980, y: 220, w: 50, h: 50 };
+
+let keys = {};
+
+// --- 3. キーボード操作 ---
+window.addEventListener('keydown', e => { keys[e.code] = true; });
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+canvas.addEventListener('click', () => { canvas.focus(); });
+
+// --- 4. ゲームのメイン処理 ---
+function gameLoop() {
+    // クリア状態なら動かさない
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+function update() {
+    if (isGameClear) return;
+    
+    // 左右移動・ジャンプ
+    if (keys['ArrowRight']) player.x += player.speed;
+    if (keys['ArrowLeft']) player.x -= player.speed;
+    if (keys['Space'] && player.onGround) {
+        player.dy = player.jump;
+        player.onGround = false;
+    }
+
+    player.dy += gravity;
+    player.y += player.dy;
+    player.onGround = false;
+
+    // 足場との衝突判定
+    mapObjects.forEach(obj => {
+        if (player.x < obj.x + obj.w && player.x + player.w > obj.x &&
+            player.y + player.h > obj.y && player.y + player.h < obj.y + obj.h + player.dy) {
+            player.y = obj.y - player.h;
+            player.dy = 0;
+            player.onGround = true;
+        }
+    });
+
+    // カメラのスクロール
+    if (player.x > canvas.width / 3) {
+        scrollX = player.x - canvas.width / 3;
+    }
+
+    // 奈落判定
+    if (player.y > canvas.height) {
+        lives--;
+        if (lives <= 0) {
+            alert("ゲームオーバー！");
+            score = 0;
+            lives = 5;
+        }
+        resetGame();
+    }
+
+    // --- 🎯 星とのあたり判定（ここが重要！） ---
+    if (player.x < goal.x + goal.w && player.x + player.w > goal.x &&
+        player.y < goal.y + goal.h && player.y + player.h > goal.y) {
+        isGameClear = true; // クリア状態にする
+        score += 500;
+    }
+}
+// --- 5. 画面の描画処理 ---
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // ① 背景の描画（画像がなければピンク色のグラデーション）
+    if (imagesLoaded.bg) {
+        let bgX = -(scrollX * 0.3) % canvas.width; 
+        ctx.drawImage(imgBg, bgX, 0, canvas.width, canvas.height);
+        ctx.drawImage(imgBg, bgX + canvas.width, 0, canvas.width, canvas.height);
+    } else {
+        ctx.fillStyle = "#fff0f5";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    ctx.save();
+    ctx.translate(-scrollX, 0);
+
+    mapObjects.forEach(obj => {
+        if (imagesLoaded.platform) {
+            ctx.drawImage(imgPlatform, obj.sx, obj.sy, obj.sw, obj.sh, obj.x, obj.y, obj.w, obj.h);
+        } else {
+            ctx.fillStyle = "#afeeee";
+            ctx.fillRect(obj.x, obj.y, obj.w, obj.h);
+        }
+    });
+
+    if (imagesLoaded.goal) {
+        ctx.drawImage(imgGoalStar, goal.x, goal.y, goal.w, goal.h);
+    } else {
+        ctx.fillStyle = "#ffd700";
+        ctx.beginPath();
+        ctx.arc(goal.x + goal.w/2, goal.y + goal.h/2, goal.w/2, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // ① 背景
+    let bgX = -(scrollX * 0.3) % canvas.width; 
+    ctx.drawImage(imgBg, bgX, 0, canvas.width, canvas.height);
+    ctx.drawImage(imgBg, bgX + canvas.width, 0, canvas.width, canvas.height);
+
+    ctx.save();
+    ctx.translate(-scrollX, 0);
+
+    // ④ プレイヤーの描画（画像がなければ白い四角）
+    if (imagesLoaded.player) {
+        ctx.drawImage(imgPlayer, player.x, player.y, player.w, player.h);
+    } else {
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#ffb6c1";
+        ctx.lineWidth = 3;
+        ctx.fillRect(player.x, player.y, player.w, player.h);
+        ctx.strokeRect(player.x, player.y, player.w, player.h);
+    }
+
+    ctx.restore();
+
+    // ⑤ 奈落の描画（画像がなければ紺色の床）
+    if (imagesLoaded.abyss) {
+        ctx.drawImage(imgAbyss, 0, 320, canvas.width, 80);
+    } else {
+        ctx.fillStyle = "#191970";
+        ctx.fillRect(0, 320, canvas.width, 80);
+    }
+
+    // ⑥ UI（文字）
+    ctx.fillStyle = "#887a93";
+    ctx.font = "bold 16px sans-serif";
+    ctx.fillText(`SCORE: ${score}`, 20, 30);
+    ctx.fillText(`LIVES: ${"❤️".repeat(lives)}`, 20, 55);
+
+    // --- 🎉 ゲームクリア画面の表示 ---
+    if (isGameClear) {
+        // 半透明の可愛いピンクの膜を張る
+        ctx.fillStyle = "rgba(255, 220, 235, 0.8)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // クリア文字
+        ctx.fillStyle = "#e096b7";
+        ctx.font = "bold 40px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("CONGRATULATIONS!", canvas.width / 2, canvas.height / 2);
+        
+        ctx.font = "bold 20px sans-serif";
+        ctx.fillText("⭐ ゲームクリア！おめでとう！ ⭐", canvas.width / 2, canvas.height / 2 + 50);
+    }
+}
+
+function resetGame() {
+    player.x = 60;
+    player.y = 200;
+    player.dy = 0;
+    isGameClear = false;
+}
+
+// 最初のやり直しボタン用に関数を外に出しておく
+window.resetGame = resetGame;
+
+// 全画像の読み込みチェック
+let loadedImages = 0;
+const totalImages = 5; // 星が増えたので5つ
+function imageLoaded() {
+    loadedImages++;
+    if (loadedImages === totalImages) {
+        update();
+    }
+}
+imgBg.onload = imageLoaded;
+imgPlayer.onload = imageLoaded;
+imgPlatform.onload = imageLoaded;
+imgAbyss.onload = imageLoaded;
+imgGoalStar.onload = imageLoaded;
+
+
+
+//操作キー
+    if (isGameClear) return;
+
+    if (keys['ArrowRight']) player.x += player.speed;
+    if (keys['ArrowLeft']) player.x -= player.speed;
+    if (keys['Space'] && player.onGround) {
+        player.dy = player.jump;
+        player.onGround = false;
+    }
+
+//usagon.cssのふくせい
+body {
+    /* 画像を背景に指定 */
+    background-image: url('haikei.png');
+    
+    /* 背景画像をタイル状に繰り返す */
+    background-repeat: repeat;
+    
+    /* 画像がボヤけないように、ドットをくっきりさせる魔法のコード */
+    image-rendering: pixelated;
+
+    /* 「あらめ」にしたい場合は、ここの数字を大きく調整してください */
+    background-size: 500px auto; 
+
+    /* その他の設定 */
+    font-family: 'Hiragino Maru Gothic ProN', sans-serif;
+    color: #887a93;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    color: #ffb7d5;
+    text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.8);
+    font-size: 2.5rem;
+}
+
+/* メンバー並び */
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+/* メンバーカード */
+.member-card {
+    background: rgba(255, 255, 255, 0.6);
+    border: 3px solid #ffffff;
+    border-radius: 30px;
+    padding: 20px;
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 20px rgba(255, 182, 193, 0.2);
+}
+
+.member-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(255, 182, 193, 0.4);
+}
+
+.icon-wrapper img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    object-fit: cover;
+}
+
+/* モーダル（詳細画面） */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 240, 245, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 30px;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 40px;
+    position: relative;
+    border: 5px solid #ffe4ed;
+}
+
+.close-btn {
+    position: absolute;
+    right: 20px; top: 10px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #ffb7d5;
+}
+
+.channel-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #ffb7d5;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+usagons.jsのふくせい
+// メンバーのデータ
+const memberData = {
+    daimazin: {
+        name: "大魔神",
+        desc: "鋼メンタルで周りの人を巻き込むけどかわいい一面もあるイケメン。",
+        url: "https://www.youtube.com/@daimazin"
+    },
+    usagon: {
+        name: "うさごん",
+        desc: "発狂系YouTuderのメンバー主",
+        url: "https://www.youtube.com/channel/UCg0movb1wjAV63CQ_O7wyTg"
+    },
+    sasepico: {
+        name: "させぴこ",
+        desc: "うさごんの撮影メンバーで一番最初にVTuderデビューしたYouTuder。",
+        url: "https://www.youtube.com/@sasepico"
+    },
+    ahahin: {
+        name: "あはひん",
+        desc: "",
+        url: "https://www.youtube.com/@ahahin"
+    },
+    asami: {
+        name: "あさみ",
+        desc: "誰よりもイケメンに大魔神さんを描く絵師さん❣",
+        url: "https://www.youtube.com/@k_%E3%81%82%E3%81%95%E3%81%BF"
+    },
+    geti: {
+        name: "げち",
+        desc: "",
+        url: "https://www.youtube.com/@Gechi0519"
+    },
+    gabo: {
+        name: "がぼ",
+        desc: "うさごんさんのグッズのイラストやサムネ画像のイラストを担当しているすごい人。",
+        url: "https://www.youtube.com/@gabogabo0414"
+    },
+    tonton: {
+        name: "卍トントン卍",
+        desc: "",
+        url: "https://www.youtube.com/@tontondaaaaaa"
+    },
+    gyogyogyo: {
+        name: "ギョギョギョ",
+        desc: "サムネが面白すぎるYouTuber。よく大魔神さんと配信をしてるYouTuderの一人。",
+        url: "https://www.youtube.com/@%E3%82%AE%E3%83%A7%E3%82%AE%E3%83%A7%E3%82%AE%E3%83%A70726"
+    },
+    ramune: {
+        name: "らむね",
+        desc: "たぶ撮影メンバーの中で一番若い。うさごんさんにもてもて。",
+        url: "https://www.youtube.com/@ramune_hoshigumo"
+    },
+    rai: {
+        name: "らい",
+        desc: "",
+        url: "https://www.youtube.com/@lillil419/shorts"
+    },
+    aru: {
+        name: "ある",
+        desc: "",
+        url: "https://www.youtube.com/@%E3%81%82%E3%82%8B_g_s/streams"
+    },
+    kikkoro: {
+        name: "きっころ",
+        desc: "よく大魔神さんと配信してるYouTuderの一人。よく「うりうり～」て言ってる。",
+        url: "https://www.youtube.com/@kikkoro5656"
+    },
+};
+
+// 詳細を表示する関数
+function showDetail(id) {
+    const data = memberData[id];
+    const modalBody = document.getElementById('modal-body');
+    
+    modalBody.innerHTML = `
+        <h2 style="color: #ffb7d5;">${data.name}</h2>
+        <p>${data.desc}</p>
+        <a href="${data.url}" target="_blank" class="channel-link">YouTubeチャンネルを見る</a>
+    `;
+    
+    document.getElementById('modal').style.display = 'block';
+}
+
+// モーダルを閉じる関数
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+うさごんず.htmlのふくせい
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Favorite Members</title>
+    <link rel="stylesheet" href="usagon.css">
+</head>
+<body>
+
+    <header>
+        <h1>☁️ うさごん撮影メンバー ☁️</h1>
+        <p></p>
+    </header>
+
+    <main class="container">
+        <div class="member-card" onclick="showDetail('usagon')">
+            <div class="icon-wrapper">
+                <img src="https://stickershop.line-scdn.net/stickershop/v1/product/23473657/LINEStorePC/main.png?v=1" alt="メンバー2">
+            </div>
+            <h2>うさごん</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('daimazin')">
+            <div class="icon-wrapper">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSumEwoMDYSIDyJwf6Vs9IYLw3Tx_oUjprg-w&s" alt="メンバー1">
+            </div>
+            <h2>大魔神</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('sasepico')">
+            <div class="icon-wrapper">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9EtgHQT5n-IU_HHS13xMW5hBJkb0Ih9bnDQ&s" alt="メンバー2">
+            </div>
+            <h2>させぴこ</h2>
+        </div>
+        
+        <div class="member-card" onclick="showDetail('ahahin')">
+            <div class="icon-wrapper">
+                <img src="https://yt3.googleusercontent.com/a3vlnIS-UgfiS0Y1o8z2omp8lqaV0j8XbLq8Q0e_KsPehC8pds-rUa6Z_nQ4HXEl9px-w5Kqiw=s900-c-k-c0x00ffffff-no-rj" alt="メンバー1">
+            </div>
+            <h2>あはひん</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('kikkoro')">
+            <div class="icon-wrapper">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcCPqcMYbZUgOKWQdFtpLMVJpqdA9gfttTTw&s" alt="メンバー2">
+            </div>
+            <h2>きっころ</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('gyogyogyo')">
+            <div class="icon-wrapper">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtw-iND-Jv1yUf17of3KhBsxJXXfqdgBqXrQ&s" alt="メンバー1">
+            </div>
+            <h2>ギョギョギョ</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('asami')">
+            <div class="icon-wrapper">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyFl7ni8Axa3J_9J4BcZqQws9vg5Fx905l7w&s" alt="asami">
+            </div>
+            <h2>あさみ</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('geti')">
+            <div class="icon-wrapper">
+                <img src="https://yt3.googleusercontent.com/LeqJ2I2BdknVLG0b6pVq0DBbDWt0Rj8xz47pTD2vbgNvMhd8okRMRylB4yD4Kpw1z45x_WPs=s160-c-k-c0x00ffffff-no-rj" alt="メンバー1">
+            </div>
+            <h2>げち</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('gabo')">
+            <div class="icon-wrapper">
+                <img src="https://yt3.googleusercontent.com/x9YZQkmuNscAZFDCtX8Q4kq9LYrbmtqpLnFdutSikpuQdrbeabwGhuoPMo-rOB0PVHip2_ouwg=s160-c-k-c0x00ffffff-no-rj" alt="メンバー2">
+            </div>
+            <h2>がぼ</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('tonton')">
+            <div class="icon-wrapper">
+                <img src="https://yt3.googleusercontent.com/2pCyb3IK6kabzOKSU6EVRJ-sZZ0wGVB3XY46LRuQnQ91Pjn5puqFDqBoTtJG-TUGKPJG0yBm=s160-c-k-c0x00ffffff-no-rj" alt="メンバー1">
+            </div>
+            <h2>卍トントン卍</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('ramune')">
+            <div class="icon-wrapper">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7EztxTNf5KCM1TId9tjO9uSWm-2_ZhzvwKw&s" alt="メンバー2">
+            </div>
+            <h2>星雲らむね</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('rai')">
+            <div class="icon-wrapper">
+                <img src="https://yt3.googleusercontent.com/ch5pZRK8nxLPJO4Qgz22TDf2HuB7Ig5UAXDQYd549DR7A8aC_89XvMXjqglLCSX02Nwpwu4Nlu8=s160-c-k-c0x00ffffff-no-rj" alt="メンバー1">
+            </div>
+            <h2>らい</h2>
+        </div>
+
+        <div class="member-card" onclick="showDetail('aru')">
+            <div class="icon-wrapper">
+                <img src="https://yt3.googleusercontent.com/f2mnf_kdh0w4q9hLIQXvqVyYmGJTDEns3fXTrDCuHXMguQFV9vn9qis5Sz3z3ThelZLmGbDr=s160-c-k-c0x00ffffff-no-rj" alt="メンバー">
+            </div>
+            <h2>ある</h2>
+        </div>
+
+        <a href="omotya/omotyabako.html">おもちゃ箱</a>
+        <a href="omotya/asureA.html">おもちゃ箱2</a>
+    </main>
+
+    <div id="modal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div id="modal-body">
+                </div>
+        </div>
+    </div>
+
+    <script src="usagons.js"></script>
+</body>
+</html>
+
+usagon.cssのふくせい
+/* 全体の設定 */
+body {
+    background: linear-gradient(135deg, #fff5fd 0%, #f0f7ff 100%);
+    font-family: 'Hiragino Maru Gothic ProN', sans-serif;
+    color: #887a93;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    color: #ffb7d5;
+    text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.8);
+    font-size: 2.5rem;
+}
+
+/* メンバー並び */
+.container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+/* メンバーカード */
+.member-card {
+    background: rgba(255, 255, 255, 0.6);
+    border: 3px solid #ffffff;
+    border-radius: 30px;
+    padding: 20px;
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 10px 20px rgba(255, 182, 193, 0.2);
+}
+
+.member-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(255, 182, 193, 0.4);
+}
+
+.icon-wrapper img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    object-fit: cover;
+}
+
+/* モーダル（詳細画面） */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 240, 245, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    margin: 10% auto;
+    padding: 30px;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 40px;
+    position: relative;
+    border: 5px solid #ffe4ed;
+}
+
+.close-btn {
+    position: absolute;
+    right: 20px; top: 10px;
+    font-size: 30px;
+    cursor: pointer;
+    color: #ffb7d5;
+}
+
+.channel-link {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #ffb7d5;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: bold;
+}
+// 奈落へ落下
+        if (player.y > canvas.height) {
+            player.life--;
+            if (player.life <= 0) {
+                player.init();
+                carrots.forEach(c => c.active = true);
+            } else {
+                player.x = 80; player.y = 300; player.vy = 0;
+            }
+        }
