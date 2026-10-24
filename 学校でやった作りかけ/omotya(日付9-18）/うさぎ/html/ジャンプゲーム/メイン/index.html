@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>うさぎのアスレチックゲーム - メイン</title>
+    <link rel="stylesheet" href="asureB.css">
+</head>
+<body>
+
+    <div id="game-container">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+        <div id="start-ready-screen" class="overlay-screen">
+            <div id="illustration-placeholder"></div>
+            
+            <div class="start-menu-btns">
+                <button onclick="location.href='../説明画面/index.html'">操作説明を見る</button>
+                <button class="start-trigger-btn" onclick="startGame()">ゲームスタート！</button>
+            </div>
+        </div>
+
+        <div id="clear-screen" class="overlay-screen" style="display: none;">
+            <div class="clear-content">
+                <h1>✨clear✨</h1>
+                <button class="restart-btn" onclick="restartGame()">もう一度あそぶ</button>
+            </div>
+        </div>
+        <!-- ゲームオーバー画面（初期状態は非表示） -->
+        <div id="gameover-screen" class="overlay-screen" style="display: none;">
+            <div class="gameover-content">
+                <h1>🎮 GAME OVER 🎮</h1>
+                <p>ライフがなくなってしまいました...</p>
+                <!-- リトライボタン。クリックでjsのretryGame()を呼ぶ -->
+                <button class="retry-btn" onclick="retryGame()">リトライ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="asureC.js"></script>
+</body>
+</html>
