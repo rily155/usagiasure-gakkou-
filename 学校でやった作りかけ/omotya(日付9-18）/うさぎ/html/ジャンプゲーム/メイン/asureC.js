@@ -6,8 +6,14 @@ const imgUsagiHokou1 = new Image(); imgUsagiHokou1.src = "images/usagi_hokou1.pn
 const imgUsagiHokou2 = new Image(); imgUsagiHokou2.src = "images/usagi_hokou2.png";
 const imgUsagiTaiki1 = new Image(); imgUsagiTaiki1.src = "images/usagi_taiki1.png";
 const imgUsagiTaiki2 = new Image(); imgUsagiTaiki2.src = "images/usagi_taiki2.png";
-const imgAshiba      = new Image(); imgAshiba.src = "images/asiba.png";
-const imgHoshi       = new Image(); imgHoshi.src = "images/go-ru.png";
+// 分割した足場・雲・ゴール画像を読み込みます
+const stageParts = {};
+for (let i = 1; i <= 27; i++) {
+    const image = new Image();
+    image.src = `images/starge/part_${String(i).padStart(2, "0")}.png`;
+    stageParts[i] = image;
+}
+const imgHoshi       = new Image(); imgHoshi.src = "images/starge/part_24.png";
 const imgHaikei      = new Image(); imgHaikei.src = "images/haikei.png";
 const imgNaraku      = new Image(); imgNaraku.src = "images/naraku.png";
 const imgNinnzinn    = new Image(); imgNinnzinn.src = "images/ninnzinn.png";
@@ -84,23 +90,19 @@ const player = {
         this.setNextBlink();
     },
     setNextBlink() {
-        // 5〜9秒の間でランダムに設定
         this.nextBlinkInterval = Math.random() * (9 - 5) + 5;
     },
     update(dt) {
-        // 横移動の速度計算 (px/秒)
         if (keys.ArrowLeft) { this.vx = -this.speed; this.facing = "left"; }
         else if (keys.ArrowRight) { this.vx = this.speed; this.facing = "right"; }
         else { this.vx = 0; }
 
-        // ジャンプ
         if (keys.Space && this.isGrounded) { 
             this.vy = this.jumpForce; 
             this.isGrounded = false; 
             this.animTime = 0;
         }
 
-        // デルタタイム（dt）をかけて位置と速度を更新
         this.vy += this.gravity * dt;
         this.x += this.vx * dt; 
         this.y += this.vy * dt;
@@ -108,7 +110,6 @@ const player = {
         if (this.x < 0) this.x = 0;
         if (this.x + this.width > canvas.width) this.x = canvas.width - this.width;
 
-        // アニメーション時間の更新
         if (this.isGrounded) {
             if (this.vx !== 0) {
                 this.isBlinking = false; this.idleTimer = 0;
@@ -135,13 +136,11 @@ const player = {
         let currentImg = imgUsagiTaiki1;
 
         if (!this.isGrounded) {
-            // ネコ（main.js）のジャンプアニメーション手法を参考にした動的フレーム選択
             const t = Math.max(-1, Math.min(1, this.vy / Math.abs(this.jumpForce)));
             const jumpFrames = [imgUsagiTaiki1, imgUsagiHokou1, imgUsagiHokou2, imgUsagiTaiki2];
             const frameIndex = Math.max(0, Math.min(jumpFrames.length - 1, Math.round((t + 1) * 0.5 * (jumpFrames.length - 1))));
             currentImg = jumpFrames[frameIndex];
         } else if (this.vx !== 0) {
-            // 歩行アニメーション（約0.13秒ごとに画像を切り替え）
             const walkFrame = Math.floor(this.animTime * 8) % 2;
             currentImg = walkFrame === 0 ? imgUsagiHokou1 : imgUsagiHokou2;
         } else {
@@ -175,12 +174,13 @@ function retryGame() {
 
 // --- 足場データ ---
 const platforms = [
-    { x:   0, y:  10, w: 200, h:  40, sx:   0, sy:   0, sw: 200, sh:  40 }, 
-    { x: -50, y: 375, w: 200, h:  50, sx: 600, sy: 165, sw: 400, sh: 100 },
-    { x: 300, y: 300, w:  45, h:  75, sx: 720, sy: 574, sw:  90, sh: 150 },
-    { x: 400, y: 175, w: 47.5, h: 50, sx: 520, sy: 586, sw:  95, sh: 100 },
-    { x:  50, y: 150, w: 100, h: 150, sx: 620, sy: 574, sw: 100, sh: 150 },
-    { x:   0, y: 150, w: 180, h: 100, sx: 700, sy:  46, sw: 180, sh: 100 }
+    // x, y は足場の位置。part は分割画像の番号です。
+    { x:   0, y:  10, w: 200, h:  40, part: 1 },
+    { x: -50, y: 375, w: 200, h:  50, part: 12 },
+    { x: 300, y: 300, w:  45, h:  75, part: 17 },
+    { x: 400, y: 175, w:  48, h:  50, part: 6 },
+    { x:  50, y: 150, w: 100, h:  75, part: 6 },
+    { x:   0, y: 150, w: 180, h:  50, part: 4 }
 ];
 
 // --- にんじんデータ ---
@@ -190,8 +190,8 @@ let carrots = [
     { x:  80, y:  90, w: 30, h: 30, active: true }
 ];
 
-// --- ゴール（星）データ ---
-const goalStar = { x: 300, y: 25, w: 75, h: 75 };
+// --- ゴール（星）データ：もっと高い位置（画面の最上部付近・右側）に変更しました ---
+const goalStar = { x: 700, y: 40, w: 75, h: 75 };
 
 function checkCollision(rect1, rect2) {
     const insetX = 8;
@@ -219,11 +219,10 @@ function restartGame() {
     carrots.forEach(c => c.active = true);
 }
 
-// --- メインループ（デルタタイム計算の導入） ---
+// --- メインループ ---
 let previousTime = 0;
 
 function gameLoop(timestamp) {
-    // 前フレームからの経過時間（秒）を算出（極端な負荷による破綻を防ぐため最大1/30秒に制限）
     const dt = Math.min((timestamp - previousTime) / 1000 || 0, 1 / 30);
     previousTime = timestamp;
 
@@ -279,7 +278,10 @@ function gameLoop(timestamp) {
     ctx.drawImage(imgHaikei, 0, 0, canvas.width, canvas.height);
 
     platforms.forEach(pf => {
-        ctx.drawImage(imgAshiba, pf.sx, pf.sy, pf.sw, pf.sh, pf.x, pf.y, pf.w, pf.h);
+        const image = stageParts[pf.part];
+        if (image && image.complete && image.naturalWidth > 0) {
+            ctx.drawImage(image, pf.x, pf.y, pf.w, pf.h);
+        }
     });
 
     carrots.forEach(c => {
@@ -295,7 +297,8 @@ function gameLoop(timestamp) {
     // UI表示
     if (isPlaying) {
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; ctx.fillRect(15, 15, 160, 40);
-        ctx.fillStyle = "#ffffff"; ctx.font = "bold 16px sans-serif";
+        ctx.fillStyle = "$ffffff"; ctx.font = "bold 16px sans-serif"; // 修正
+        ctx.fillStyle = "#ffffff";
         ctx.fillText(`ライフ: ${"❤️".repeat(player.life)}${"🖤".repeat(player.maxLife - player.life)}`, 25, 41);
     }
 
