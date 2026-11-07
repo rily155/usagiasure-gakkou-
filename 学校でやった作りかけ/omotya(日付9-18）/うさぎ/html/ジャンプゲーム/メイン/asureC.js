@@ -1,6 +1,10 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// --- 横に長いステージの設定 ---
+const worldWidth = 1700; // ステージ全体の横幅
+let cameraX = 0;         // 現在表示している画面の左端
+
 // --- 画像の読み込み設定 ---
 const imgUsagiHokou1 = new Image(); imgUsagiHokou1.src = "images/usagi_hokou1.png";
 const imgUsagiHokou2 = new Image(); imgUsagiHokou2.src = "images/usagi_hokou2.png";
@@ -108,7 +112,7 @@ const player = {
         this.y += this.vy * dt;
 
         if (this.x < 0) this.x = 0;
-        if (this.x + this.width > canvas.width) this.x = canvas.width - this.width;
+        if (this.x + this.width > worldWidth) this.x = worldWidth - this.width;
 
         if (this.isGrounded) {
             if (this.vx !== 0) {
@@ -175,23 +179,32 @@ function retryGame() {
 // --- 足場データ ---
 const platforms = [
     // x, y は足場の位置。part は分割画像の番号です。
-    { x:   0, y:  10, w: 200, h:  40, part: 1 },
-    { x: -50, y: 375, w: 200, h:  50, part: 12 },
-    { x: 300, y: 300, w:  45, h:  75, part: 17 },
-    { x: 400, y: 175, w:  48, h:  50, part: 6 },
-    { x:  50, y: 150, w: 100, h:  75, part: 6 },
-    { x:   0, y: 150, w: 180, h:  50, part: 4 }
+    { x:   0, y: 375, w: 150, h:  75, part: 12},
+    { x: 300, y: 300, w:  75, h:  75, part: 17},
+    { x: 400, y: 175, w: 100, h:  50, part: 6 },
+    { x: 550, y: 370, w: 200, h:  50, part: 7 },
+    { x: 600, y: 150, w: 180, h:  50, part: 19},
+
+    // 右方向へ続く足場（横スクロール用）
+    { x: 800,  y: 370, w: 150, h: 50, part: 7 },
+    { x: 960,  y: 290, w: 130, h: 50, part: 6 },
+    { x: 1110, y: 220, w: 130, h: 50, part: 19},
+    { x: 1260, y: 150, w: 130, h: 50, part: 6 },
+    { x: 1420, y: 100, w: 150, h: 50, part: 7 }
 ];
 
 // --- にんじんデータ ---
 let carrots = [
     { x: 210, y: 340, w: 30, h: 30, active: true },
     { x: 320, y: 260, w: 30, h: 30, active: true },
-    { x:  80, y:  90, w: 30, h: 30, active: true }
+    { x: 850, y: 330, w: 30, h: 30, active: true },
+    { x: 1010, y: 250, w: 30, h: 30, active: true },
+    { x: 1170, y: 180, w: 30, h: 30, active: true },
+    { x: 1470, y: 60, w: 30, h: 30, active: true }
 ];
 
 // --- ゴール（星）データ：もっと高い位置（画面の最上部付近・右側）に変更しました ---
-const goalStar = { x: 700, y: 40, w: 75, h: 75 };
+const goalStar = { x: 1480, y: 25, w: 75, h: 75 };
 
 function checkCollision(rect1, rect2) {
     const insetX = 8;
@@ -273,9 +286,23 @@ function gameLoop(timestamp) {
         }
     }
 
+    // カメラをうさぎに追従させる（ステージ端では止める）
+    cameraX = Math.max(0, Math.min(
+        player.x + player.width / 2 - canvas.width / 2,
+        worldWidth - canvas.width
+    ));
+
     // 描画
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(imgHaikei, 0, 0, canvas.width, canvas.height);
+
+    // ここからステージ内の描画はカメラ位置に合わせて横へスクロール
+    ctx.save();
+    ctx.translate(-cameraX, 0);
+
+    // 背景を800pxごとに繰り返して表示
+    for (let bgX = 0; bgX < worldWidth; bgX += canvas.width) {
+        ctx.drawImage(imgHaikei, bgX, 0, canvas.width, canvas.height);
+    }
 
     platforms.forEach(pf => {
         const image = stageParts[pf.part];
@@ -292,9 +319,15 @@ function gameLoop(timestamp) {
 
     if (isPlaying || isGameover) player.draw();
 
-    ctx.drawImage(imgNaraku, 0, canvas.height - 200, canvas.width, 200);
+    // 奈落もステージ全体に配置
+    for (let pitX = 0; pitX < worldWidth; pitX += canvas.width) {
+        ctx.drawImage(imgNaraku, pitX, canvas.height - 200, canvas.width, 200);
+    }
 
-    // UI表示
+    // ステージ内の描画はここまで
+    ctx.restore();
+
+    // UIはカメラに追従させず、画面左上に固定
     if (isPlaying) {
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)"; ctx.fillRect(15, 15, 160, 40);
         ctx.fillStyle = "$ffffff"; ctx.font = "bold 16px sans-serif"; // 修正

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Phaser 3 導入手順（Node.js不要）</title><style>body{font-family:system-ui,'Yu Gothic',sans-serif;line-height:1.8;background:#f3f6fa;color:#1e293b;margin:0}main{max-width:850px;margin:32px auto;background:white;padding:32px;border-radius:16px;box-shadow:0 5px 25px #0001}h1{font-size:1.8rem}h2{border-left:5px solid #2563eb;padding-left:12px;margin-top:35px}code,pre{font-family:Consolas,monospace}pre{background:#0f172a;color:#e2e8f0;padding:18px;overflow:auto;border-radius:10px;line-height:1.5}a{color:#1d4ed8}.note{background:#eff6ff;padding:14px;border-radius:9px}li{margin:8px 0}footer{margin-top:30px;color:#64748b;font-size:.9rem}@media(max-width:650px){main{margin:0;padding:20px;border-radius:0}}</style></head><body><main><h1>Phaser 3 導入手順</h1><p>Node.js・npm・Viteを使わず、Phaser 3の配布ファイルをプロジェクト内の <code>lib</code> フォルダに保存する方法です。Gitにもライブラリ本体を登録できます。</p>
+<h2>1. Phaser本体を取得する</h2><ol><li><a href="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js" target="_blank" rel="noopener">Phaser 3.90.0 の phaser.min.js</a> を開く。</li><li>ブラウザの「名前を付けて保存」でファイル名を <code>phaser.min.js</code> にする。</li><li>公式リリース情報：<a href="https://github.com/phaserjs/phaser/releases/tag/v3.90.0" target="_blank" rel="noopener">Phaser v3.90.0</a>。</li></ol>
+<h2>2. フォルダを用意する</h2><pre>usagi-game/
+├── index.html
+├── lib/
+│   └── phaser.min.js
+├── js/
+│   └── main.js
+└── images/</pre>
+<h2>3. index.html を作成する</h2><pre>&lt;!doctype html&gt;
+&lt;html lang="ja"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+  &lt;title&gt;うさぎゲーム&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div id="game"&gt;&lt;/div&gt;
+  &lt;script src="./lib/phaser.min.js"&gt;&lt;/script&gt;
+  &lt;script src="./js/main.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre><p>Phaser本体を、ゲームのJavaScriptより先に読み込みます。</p>
+<h2>4. js/main.js を作成する</h2><pre>class GameScene extends Phaser.Scene {
+  constructor() {
+    super('GameScene');
+  }
+  create() {
+    this.player = this.add.rectangle(100, 200, 40, 40, 0x2563eb);
+    this.cursors = this.input.keyboard.createCursorKeys();
+  }
+  update(time, delta) {
+    const speed = 200 * delta / 1000;
+    if (this.cursors.left.isDown) this.player.x -= speed;
+    if (this.cursors.right.isDown) this.player.x += speed;
+  }
+}
+
+new Phaser.Game({
+  type: Phaser.AUTO,
+  parent: 'game',
+  width: 800,
+  height: 450,
+  backgroundColor: '#dbeafe',
+  scene: GameScene
+});</pre>
+<h2>5. ブラウザで動作確認する</h2><ol><li>開発時はVS CodeのLive ServerなどでローカルHTTPサーバーを起動する（Node.jsのインストールは不要）。</li><li>表示されたURLでゲームを開き、左右キーで青い四角形が動くことを確認する。</li><li>F12 → Consoleで <code>Phaser.VERSION</code> と入力し、<code>3.90.0</code> と表示されれば読み込み成功。</li></ol><p class="note">HTMLファイルを直接開く <code>file://</code> 方式では、後から画像・JSONなどを読み込む際にブラウザの制限で失敗する場合があります。HTTPサーバーでの確認を推奨します。</p>
+<h2>6. Gitに保存する</h2><pre>git init
+git add index.html js/main.js lib/phaser.min.js
+git commit -m "Phaser 3.90.0 を導入"</pre><p><code>lib/phaser.min.js</code> もGitに含まれます。別のPCでクローンしても <code>npm install</code> は不要です。</p>
+<h2>7. 公開する</h2><p><code>index.html</code>、<code>js/</code>、<code>lib/</code>、<code>images/</code> をそのままXserverなどのWebサーバーにアップロードします。ビルドは不要です。</p>
+<footer>補足：Phaser 3.90.0を使用する手順です。ライブラリを更新する際は配布ファイルの差し替えと動作確認を行ってください。</footer></main></body></html>
