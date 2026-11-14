@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQLite API 動作テスト</title>
+<style>
+:root{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#1e293b;background:#f1f5f9}*{box-sizing:border-box}body{max-width:900px;margin:40px auto;padding:0 16px}h1{margin-bottom:8px}.muted{color:#64748b}section{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:22px;margin:20px 0;box-shadow:0 3px 14px #0f172a0a}label{display:block;font-weight:600;margin:12px 0 6px}input,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit}textarea{min-height:95px;resize:vertical}button{border:0;border-radius:8px;padding:10px 15px;background:#2563eb;color:white;font:inherit;cursor:pointer}button:hover{filter:brightness(.92)}button.secondary{background:#475569}button.danger{background:#dc2626}button:disabled{opacity:.5;cursor:wait}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.record{padding:14px 0;border-bottom:1px solid #e2e8f0}.record:last-child{border:0}.record header{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.record pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f8fafc;border-radius:8px;padding:12px}.status{white-space:pre-wrap;overflow-wrap:anywhere;background:#0f172a;color:#e2e8f0;padding:15px;border-radius:9px;min-height:55px}.ok{color:#86efac}.err{color:#fca5a5}
+</style>
+</head>
+<body>
+<h1>SQLite API 動作テスト</h1><p class="muted">Python Web Server / <code>/api/records</code> — 保存・取得・更新・削除</p>
+<section><h2>接続確認</h2><div class="actions"><button id="health">API接続テスト</button><button class="secondary" id="refresh">一覧を更新</button></div></section>
+<section><h2 id="formTitle">新規データを保存</h2><form id="form"><input type="hidden" id="recordId"><label for="name">名前</label><input id="name" required maxlength="100" placeholder="例：テスト太郎"><label for="message">メッセージ</label><textarea id="message" required placeholder="SQLiteに保存する文章"></textarea><div class="actions"><button id="submit" type="submit">SQLiteに保存</button><button type="button" class="secondary" id="cancel" hidden>編集をキャンセル</button></div></form></section>
+<section><h2>保存済みデータ <span id="count"></span></h2><div id="records" class="muted">読み込み中...</div></section>
+<section><h2>APIレスポンス</h2><pre id="status" class="status" aria-live="polite">操作結果がここに表示されます。</pre></section>
+<script>
+const $ = id => document.getElementById(id);
+const API = '/api/records';
+function report(value, error=false){$('status').textContent=typeof value==='string'?value:JSON.stringify(value,null,2);$('status').className='status '+(error?'err':'ok')}
+async function request(path, options={}){
+  let response;
+  try { response=await fetch(path,{...options,headers:{...(options.body?{'Content-Type':'application/json'}:{}),...(options.headers||{})}}) }
+  catch(e){throw new Error('通信できません。Python Web ServerからこのHTMLを開いているか確認してください。 '+e.message)}
+  const text=await response.text();let result;
+  try{result=JSON.parse(text)}catch{throw new Error('JSON以外の応答が返りました (HTTP '+response.status+')。API対応版server.pyが起動しているか確認してください。')}
+  if(!response.ok)throw new Error(result.error||('HTTP '+response.status));
+  return result;
+}
+function resetForm(){$('recordId').value='';$('form').reset();$('formTitle').textContent='新規データを保存';$('submit').textContent='SQLiteに保存';$('cancel').hidden=true}
+async function refresh(){
+ try{
+ const result=await request(API);const records=result.records||[];$('count').textContent='('+records.length+'件)';$('records').replaceChildren();
+ if(!records.length){$('records').textContent='まだデータがありません。上のフォームから保存してください。';return}
+ for(const record of records){
+ const wrapper=document.createElement('div');wrapper.className='record';const header=document.createElement('header');
+ const title=document.createElement('strong');title.textContent='ID: '+record.id+' / '+(record.data?.name??'名前なし');
+ const buttons=document.createElement('div');buttons.className='actions';buttons.style.marginTop='0';
+ const edit=document.createElement('button');edit.textContent='編集';edit.className='secondary';edit.onclick=()=>{ $('recordId').value=record.id;$('name').value=record.data?.name??'';$('message').value=record.data?.message??'';$('formTitle').textContent='ID '+record.id+' を更新';$('submit').textContent='変更を保存';$('cancel').hidden=false;window.scrollTo({top:0,behavior:'smooth'});};
+ const del=document.createElement('button');del.textContent='削除';del.className='danger';del.onclick=async()=>{if(!confirm('ID '+record.id+' を削除しますか？'))return;try{const res=await request(API+'/'+record.id,{method:'DELETE'});report(res);if($('recordId').value===String(record.id))resetForm();await refresh()}catch(e){report(e.message,true)}};
+ buttons.append(edit,del);header.append(title,buttons);const data=document.createElement('pre');data.textContent=JSON.stringify(record.data,null,2);wrapper.append(header,data);$('records').append(wrapper);
+ }
+ }catch(e){$('records').textContent='一覧取得に失敗しました。';report(e.message,true)}
+}
+$('health').onclick=async()=>{try{report(await request('/api/health'))}catch(e){report(e.message,true)}};
+$('refresh').onclick=refresh;$('cancel').onclick=resetForm;
+$('form').onsubmit=async e=>{e.preventDefault();const id=$('recordId').value;const payload={name:$('name').value.trim(),message:$('message').value.trim()};if(!payload.name||!payload.message)return;const button=$('submit');button.disabled=true;try{const res=await request(id?API+'/'+id:API,{method:id?'PUT':'POST',body:JSON.stringify(payload)});report(res);resetForm();await refresh()}catch(err){report(err.message,true)}finally{button.disabled=false}};
+refresh();
+</script>
+</body></html>

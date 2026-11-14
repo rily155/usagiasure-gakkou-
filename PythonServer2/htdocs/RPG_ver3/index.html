@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ポケ〇トモンスターRPG</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main>
+<h1>ポケ〇トモンスターRPG</h1>
+<div class="project-import"><label for="project-file">RPG Editor JSONを読み込む：</label><input id="project-file" type="file" accept=".json,application/json"><span id="project-status">同梱のRPG Editorデータを使用中</span></div>
+<div id="game-container">
+  <div id="gameCanvas"></div>
+  <div id="start-screen">
+    <h2>マ〇ラタウン</h2>
+    <p>小さな町から冒険を始めよう！</p>
+    <button id="start-button">ゲームスタート！</button>
+  </div>
+</div>
+<p>移動：WASD / 矢印キー　会話・決定：Space / Enter</p>
+<div id="error" hidden></div>
+<details id="debug-panel" open style="margin:16px 0;background:#111827;color:#e5e7eb;padding:12px;border-radius:8px;">
+  <summary style="cursor:pointer;font-weight:bold">Scene移動デバッグログ（クリックで開閉）</summary>
+  <p id="debug-status" style="color:#fbbf24;font-size:13px">ログを収集中です。Scene移動を試してください。</p>
+  <button type="button" id="debug-copy">ログをコピー</button>
+  <button type="button" id="debug-clear">ログをクリア</button>
+  <pre id="debug-log" style="height:240px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#020617;padding:10px;user-select:text"></pre>
+</details>
+</main>
+<script src="./lib/phaser.min.js"></script>
+<script src="./js/DebugLogger.js?v=20261113-debug-1"></script>
+<script type="module" src="./js/main.js?v=20261114-modules-1"></script>
+</body>
+</html>

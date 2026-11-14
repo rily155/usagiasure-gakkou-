@@ -1,0 +1,48 @@
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #202d3b;
+  color: white;
+  font-family: "Yu Gothic", Meiryo, sans-serif;
+  text-align: center;
+}
+main { max-width: 860px; margin: auto; padding: 20px 12px; }
+h1 { font-size: 24px; }
+#game-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 10 / 9;
+  margin: auto;
+  background: #151d25;
+  border: 6px solid #43566c;
+  overflow: hidden;
+}
+#gameCanvas { width: 100%; height: 100%; }
+#gameCanvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+#start-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: rgba(15,25,35,.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+button {
+  padding: 12px 24px;
+  border: 3px solid #27374a;
+  background: #f7e9b5;
+  color: #27374a;
+  font-weight: bold;
+  cursor: pointer;
+}
+#error { padding: 12px; background: #7f1d1d; }
+[hidden] { display: none !important; }
+.project-import{margin:12px auto;padding:10px;background:#263347;color:white;display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:620px}.project-import input{max-width:230px}.project-import span{font-size:12px}

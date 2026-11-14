@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>レトロモンスターRPG</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main>
+<h1>レトロモンスターRPG</h1>
+<div class="project-import"><label for="project-file">RPG Editor JSONを読み込む：</label><input id="project-file" type="file" accept=".json,application/json"><span id="project-status">同梱のRPG Editorデータを使用中</span></div>
+<div id="game-container">
+  <div id="gameCanvas"></div>
+  <div id="start-screen">
+    <h2>モンスターの町</h2>
+    <p>小さな町から冒険を始めよう！</p>
+    <button id="start-button">ゲームスタート！</button>
+  </div>
+</div>
+<p>移動：WASD / 矢印キー　会話・決定：Space / Enter</p>
+<div id="error" hidden></div>
+</main>
+<script src="./lib/phaser.min.js"></script>
+<script src="./js/MapData.js"></script>
+<script src="./js/GameScene.js"></script>
+<script src="./js/main.js"></script>
+</body>
+</html>
