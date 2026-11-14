@@ -1,0 +1,846 @@
+ver.2.09.00 - January 28 2023
+--------------------------------------------------
+- Modified the frame properties window.
+- [Color Palette] Added "Merge Color" to the menu.
+- [Export] Modified file name specification for multiple files output.
+- [Browser] Added some items to the preferences.
+- [Browser] Modified preview process.
+
+ver.2.08.24 - October 18 2022
+--------------------------------------------------
+- Fixed version data.
+- Fixed update check.
+
+ver.2.08.22 - October 12 2022
+--------------------------------------------------
+- Modified grid snapping.
+- Modified flipping images horizontal.
+
+ver.2.08.21 - December 23 2018
+--------------------------------------------------
+- Fixed a bug when delete or cut part of an image.
+- Fixed a bug when changing active frame.
+
+ver.2.08.20 - December 15 2018
+--------------------------------------------------
+- Modified to keep selection after delete or cut part of an image.
+- Modified the method to delete frames.
+- Fixed a bug in calculating font size in for main menu.
+
+ver.2.08.19 - December 9 2018
+--------------------------------------------------
+- Fixed a bug when pasting an image with alpha-channel.
+- Fixed a bug of the caption for zoom value.
+- Fixed a bug in calculating font size in for main menu.
+- [Browser] Fixed a bug when loading image files.
+- [Browser] Fixed a bug of preview.
+
+ver.2.08.18 - December 6 2018
+--------------------------------------------------
+- [Preferences] Added 'Play From Current Frame' in shortcut keys.
+- [Preferences] Added 'Execute Flood Fill Directly' in shortcut keys.
+- [Preferences] Modified the method to specify a shortcut key.
+- [Preferences] Modified treatment of the method to specify a shortcut key.
+  Note: The method to specify the middle mouse button and mouse wheel up/down has been changed.
+
+ver.2.08.17 - December 4 2018
+--------------------------------------------------
+- Fixed a bug when fill.
+
+ver.2.08.16 - December 3 2018
+--------------------------------------------------
+- Modified to not lock a folder.
+- Added ability to change the font in main menu.
+- Added support of shortcut-keys for preview menu items.
+- Added the 'Play From First Frame' button in toolbar.
+
+ver.2.08.15 - November 27 2018
+--------------------------------------------------
+- Modified zoom behavior.
+- Fixed a bug when resizing layer list.
+
+ver.2.08.14 - November 12 2018
+--------------------------------------------------
+- Added ability to scroll by middle mouse button.
+
+ver.2.08.13 - November 10 2018
+--------------------------------------------------
+- Added ability to use Ctrl + mouse wheel to zoom.
+- Modified to load pen and tile images with any bpp.
+- Layer's lock behavior in all frames' commands has been modified.
+- Old temporary folders are now deleted automatically.
+- [Adjust Color] Added the Preview option.
+
+ver.2.08.12 - October 23 2018
+--------------------------------------------------
+- [Fill] Fixed a bug.
+- Fixed a bug in pasteing an image from a file.
+
+ver.2.08.11 - July 31 2018
+--------------------------------------------------
+- Modified to keep the last file type for 'Saving a Copy'.
+- [Fill] Added 9-slicing type for arrangement options.
+- [Fill] Fixed a bug that transparent color didn't work effectively.
+- [Fill] Fixed a bug in loading a source image.
+
+ver.2.08.10 - July 15 2018
+--------------------------------------------------
+- Fixed a bug of selection by right dragging.
+
+ver.2.08.09 - July 12 2018
+--------------------------------------------------
+- Fixed a bug in duplicating an image.
+- Fixed a bug of selection by right dragging.
+
+ver.2.08.08 - July 8 2018
+--------------------------------------------------
+- Fixed a bug in pasting into a layer.
+- [Preview] Added 'Fill with Background Color' option.
+
+ver.2.08.06 - June 15 2018
+--------------------------------------------------
+- Corrected misspelling in the UI.
+- Modified an error occurred in pasting layer.
+
+ver.2.08.05 - June 9 2018
+--------------------------------------------------
+- Fixed a bug in drawing text.
+
+ver.2.08.04 - June 5 2018
+--------------------------------------------------
+- Modified the problem for high resolution monitors.
+
+ver.2.08.03 - May 8 2018
+--------------------------------------------------
+- Modified the display method for a selected image.
+
+ver.2.08.02 - April 25 2018
+--------------------------------------------------
+- Modified the display method for a selected image.
+- Corrected mistakes in the English UI.
+
+ver.2.08.01 - April 17 2018
+--------------------------------------------------
+- Fixed bug of Selection tools.
+
+ver.2.08.00 - March 18 2018
+--------------------------------------------------
+- Support for TIFF file format.
+
+ver.2.07.09 - March 8 2018
+--------------------------------------------------
+- Horizontal wheel scrolling has been available.
+- [Preview] Added 'Fit Window To Image' option.
+
+ver.2.07.08 - December 18 2017
+--------------------------------------------------
+- Fixed bug of color depth reduction.
+
+ver.2.07.07 - October 22 2017
+--------------------------------------------------
+- Fixed bug of changing layer properties.
+
+ver.2.07.06 - October 17 2017
+--------------------------------------------------
+- Fixed bug of Selection tools.
+
+ver.2.07.05 - October 15 2017
+--------------------------------------------------
+- [Fill] Fixed a bug of preview.
+
+ver.2.07.04 - October 11 2017
+--------------------------------------------------
+- Fixed bug of Selection tools.
+- Fixed a bug occured when preserving transparency.
+
+ver.2.07.03 - September 26 2017
+--------------------------------------------------
+- Modified to be able to subtract from a selection using by Alt key.
+
+ver.2.07.02 - September 24 2017
+--------------------------------------------------
+- Fixed a bug when pasting an image.
+
+ver.2.07.01 - September 24 2017
+--------------------------------------------------
+- Fixed a bug when pasting an image.
+
+ver.2.07.00 - September 16 2017
+--------------------------------------------------
+- [Fill] Added the Gradient.
+- [Fill] Fixed a bug for alpha-channel.
+- [Preferences] Added 'Edit Invisible Layer' option.
+- Fixed a bug when pasting an image.
+- Fixed a bug occured when rotating an image.
+
+ver.2.06.05 - September 4 2017
+--------------------------------------------------
+- Fixed a bug of multilingual UI.
+- Fixed bugs in tiling windows horizontally or vertically.
+
+ver.2.06.04 - August 19 2017
+--------------------------------------------------
+- [Import From Multi Files] Modified to enlarge canvas size to fit the largest image.
+- [Import From Multi Files] Added 'Horizontal Alignment' and 'Vertical Alignment' options.
+- [Import From Combined Image] Modified to be able to get an image from clipboard.
+
+ver.2.06.03 - August 16 2017
+--------------------------------------------------
+- [Export] Added 'Trim Transparent Pixels' option.
+- [Export] Modified processing to output alpha-channel to file.
+
+ver.2.06.02 - July 27 2017
+--------------------------------------------------
+- Added the Start position property in advanced custom-grid.
+- Fixed a bug when storing the settings of custom-grid.
+- Fixed bugs for an invisible layer.
+- Fixed a bug when pasting an image.
+
+ver.2.06.01 - July 4 2017
+--------------------------------------------------
+- Fixed a bug in storing data to the registry.
+- Released the Portable version.
+
+ver.2.06.00 - June 18 2017
+--------------------------------------------------
+- Corrected a mistake of a window title.
+- Modified to take over the configuration for a freeware version.
+
+ver.2.05.11 - May 28 2017
+--------------------------------------------------
+- Fixed a bug to open a link file.
+- Fixed a bug to draw text.
+- Fixed a bug to resize tool windows.
+
+ver.2.05.10 - May 13 2017
+--------------------------------------------------
+- Fixed a bug to undo a change of RGB value.
+- Fixed a bug of the onion skin.
+
+ver.2.05.09 - April 14 2017
+--------------------------------------------------
+- Modified to be not able to paste into an invisible layer.
+- Fixed a bug to paste into a layer with alpha-channel.
+- Modifed to open a link file by drag&drop.
+- [Pen] Modified to be not add a history when clicking an outside of a canvas.
+- [Color Replacer] Modified to be not add a history when clicking an outside of a canvas.
+- [Color Replacer] Modified the behavior when replacing by holding down the Shift-key or the Alt-key.
+
+ver.2.05.08 - April 3 2017
+--------------------------------------------------
+- Fixed a bug of an animation preview.
+- [Preferences] Added 'Next Paint Mode', 'Previous Paint Mode' in the short-cut keys.
+
+ver.2.05.07 - February 18 2017
+--------------------------------------------------
+- Advanced Custom-Grid was added.
+- [Preferences] Transparent color can be selected as a grid color.
+- Fixed a bug to lock toolbars.
+
+ver.2.05.06 - February 11 2017
+--------------------------------------------------
+- Fixed a bug caused in changing the window focus.
+- [Preferences] Added 'Select Next Color', 'Select Previous Color' in the short-cut keys.
+
+ver.2.05.05 - February 7 2017
+--------------------------------------------------
+- Fixed a bug that the screen was distorted when using a pen.
+
+ver.2.05.04 - February 5 2017
+--------------------------------------------------
+- Modified frames' properties to be able to undo.
+- Fixed a bug when a window is inactive.
+
+ver.2.05.03 - January 26 2017
+--------------------------------------------------
+- [Fill] Added Arrangement option.
+- Modified the HSL and HSV adjustment method in the color palette.
+- Toolbars and tool windows can be locked.
+
+ver.2.05.02 - January 14 2017
+--------------------------------------------------
+- Fixed a bug to resize the frame window.
+
+ver.2.05.01 - January 9 2017
+--------------------------------------------------
+- Fixed a bug for single instance.
+- Fixed a bug for export.
+- Modified UI for Hi DPI.
+- Fixed a bug to display selection.
+
+ver.2.05.00 - December 18 2016
+--------------------------------------------------
+- [Draw Text] A color can be selected from an image by the left click.
+- A size of Custom-grid can be input in divided number.
+- Modified loading jpeg.
+
+ver.2.04.11 - December 17 2016
+--------------------------------------------------
+- Modified displaying Custom-grid.
+
+ver.2.04.10 - December 15 2016
+--------------------------------------------------
+- Modified loading bmp.
+- Modified loading jpeg.
+- Modified the input processing for Custom-grid.
+- Modified language system.
+
+ver.2.04.09 - December 11 2015
+--------------------------------------------------
+- Modified language system for the New dialog.
+- Modified loading bmp.
+- Added the 'Check for update' in the help menu.
+- Added the 'Last Frame' in the repeat section window for preview.
+- [Preferences] Added the 'Automatically check for update'.
+- [Browser] Modified language system.
+
+ver.2.04.08 - November 19 2015
+--------------------------------------------------
+- Modified Selection tools.
+- Fixed a bug when displaying layer thumbnails.
+- Modified language system
+- Fixed a bug when filling with an image of clipboard.
+- Modified 'Paste Layer' to support alpha channel.
+- Modified 'Export as combined image' to support alpha channel.
+- Added 32bit in bpp list of New window.
+- Modified process of pasting a single RGB value.
+- [Magic Wand] Modified for an image with alpha channel.
+- [Color Selection] Modified for an image with alpha channel.
+- [Flood Fill] Modified for an image with alpha channel.
+
+ver.2.04.07 - August 1 2015
+--------------------------------------------------
+- Fixed a bug when specifying a color value.
+- [Browser] Fixed a bug when displaying thumbnails.
+
+ver.2.04.06 - July 22 2015
+--------------------------------------------------
+- Added the 'Combine Down' in the layer menu.
+- Move multiple frames by using drag and drop.
+- Added text formatting tags for a frame name.
+- A name is editable when editing multiple frames' properties.
+- The caption of a OK button is changeable.
+- [Preferences] Added the 'Does Not Ask in Combining Layers'.
+- [Preferences] Added the default frame name.
+- [Browser] Fixed a bug of the preview.
+
+ver.2.04.05 - July 11 2015
+--------------------------------------------------
+- Fixed a bug when saving an indexed-color image as an image with alpha-channel.
+
+ver.2.04.04 - July 8 2015
+--------------------------------------------------
+- Displays the 'Current Image' in the list of alpha-channel sources.
+- Added the 'Clipboard' in the list of alpha-channel sources.
+- Added the 'Move Selection' to the Edit menu.
+- [Adjust Color] Added the 'Preserve Transparency' option.
+- [Export] Modified to output a combined image with alpha-channel exactly.
+- [Browser] Added the 'Auto Refresh' option.
+- [Browser] Opens the context menu using the application key.
+- [Browser] Fixed a bug of the preview.
+- [Browser] Disabled the dialog-box for ico files.
+
+ver.2.04.03 - December 6 2014
+--------------------------------------------------
+- Added 'Deselect' in Edit menu.
+- Modified icons for UI.
+
+ver.2.04.02 - November 23 2014
+--------------------------------------------------
+- Fixed bug of Undo.
+
+ver.2.04.01 - September 17 2014
+--------------------------------------------------
+- Improved resampling of an image with alpha-channel.
+- [Browser] Modified preview.
+
+ver.2.04.00 - August 7 2014
+--------------------------------------------------
+- Changed the system for saving an image with alpha channel and multiple layers.
+- [Export] Added the Padding setting.
+- [Export] Added new attributes for CSV output.
+- [Preferences] Fixed bug in saving settings.
+
+ver.2.03.24 - May 26 2014
+--------------------------------------------------
+- Fixed bug of 'Fill'
+- [Browser] Support alpha channel
+
+ver.2.03.23 - May 15 2014
+--------------------------------------------------
+- Added playback sequence function for preview
+- Fixed a bug of display
+
+ver.2.03.22 - March 11 2014
+--------------------------------------------------
+- Fixed a bug of display
+
+ver.2.03.21 - February 7 2014
+--------------------------------------------------
+- Modified a bug of export
+- The option 'With Alpha Channel' will be placed anytime an image saved as TGA
+- [Browser] Modified a bug in renaming a file
+- [Browser] Modified the date option of the Search
+
+ver.2.03.20 - October 23 2013
+==================================================
+- Modified loading gif
+
+ver.2.03.19 - October 3 2013
+--------------------------------------------------
+- Added delete history function for text tool
+- Fixed threading bug
+- Fixed the bug with saving multiple files
+- [Browser] Added search function
+- [Browser] Fixed threading bug
+
+ver.2.03.18 - August 17 2013
+--------------------------------------------------
+- Fixed the bug of saving a file when ending the application
+
+ver.2.03.17 - June 13 2013
+==================================================
+- Modified loading gif
+
+ver.2.03.16 - June 2 2013
+--------------------------------------------------
+- Modified a bug of 'Pick Color'
+- Modified pasting image
+
+ver.2.03.15 - February 12 2013
+--------------------------------------------------
+- [Preferences] The option 'Use Wacom Tablet' was added
+- Modifed a bug in layer list
+- Modified a bug of 'Copy Display Image'
+- Modified a bug of 'Fill'
+- Modified a bug in pasting high-color image
+
+ver.2.03.14 - January 23 2013
+==================================================
+- [Pen] Supported the eraser function of digitizer pen
+- [Color Replacer] Supported the eraser function of digitizer pen
+
+ver.2.03.13 - December 20 2012
+==================================================
+- Modified a bug in dock menu
+
+ver.2.03.12 - December 13 2012
+==================================================
+- Added 'Tile' in preview menu
+- Added 'Draggable' in dock menu
+
+ver.2.03.11 - July 23 2012
+==================================================
+- Modified saving JPEG
+- Modified text tool
+
+ver.2.03.10 - July 7 2012
+==================================================
+- Modified the problems of UI
+
+ver.2.03.09 - June 12 2012
+==================================================
+- [Preferences] The option 'Pick Color by Alt-Click' was added
+- Modified saving AVI
+
+ver.2.03.08 - February 14 2012
+==================================================
+- Modified Copy when no selection is made
+- Web color value can be pasted into color palette
+- [Browser] Refreshes images when files are updated
+- [Browser] Added 'Open Folder' in file menu
+
+ver.2.03.07 - February 6 2012
+==================================================
+- Modified Copy/Paste so that the unselected area become transparent
+- Modified the memory management
+- Mouse cursor will be updated as soon as the tool mode is changed
+- The option 'With Alpha Channel' will be placed anytime an image saved as PNG
+- [Lasso] Supports the selecting by the continuous click
+- [Preferences] The option 'Show Grid' has been added
+
+ver.2.03.06 - December 15 2011
+==================================================
+- Added 'Open Pen/Tile Folder' in color palette menu
+
+ver.2.03.05 - December 7 2011
+==================================================
+- Modified loading gif
+
+ver.2.03.04 - August 23 2011
+==================================================
+- Added HSV control in a color palette
+- Added 'Show Custom-Grid' in View menu
+- Modified a bug in pasting layer
+
+ver.2.03.03 - July 18 2011
+==================================================
+- Modified a bug in changing RGB value
+- Modified a bug of Pen
+
+ver.2.03.02 - July 14 2011
+==================================================
+- Modified a bug of a color palette box
+
+ver.2.03.01 - July 14 2011
+==================================================
+- Modified a bug of toolbars
+
+ver.2.03.00 - July 8 2011
+==================================================
+- Added 'Modify Selection' in Edit menu
+- Added 'Stroke' in Edit menu
+- Added 'Image Position' in 'Enlarge Canvas'
+- Transparent color is effective when an image is pasted into another image
+- [Connect Line] added stair-step line
+- [Pen] Draws a line with Shift or Alt key
+- Modified 'Add Frame' and 'Duplicate Frame'
+- [Properties] BG color is selectable from a color palette box
+- Custom-grid is displayed in a loupe
+- Modified a bug of Undo
+- Modified a bug of popup menu
+- [Preferences] Modified a bug in editing popup menu
+- Modified a bug of an option for color replacer
+- Modified a bug of resample
+- Modified toolbars
+- Active frame and layer can be changed when selection exists
+
+ver.2.02.01 - May 17 2011
+==================================================
+- Modified resampling
+- Modified loading file
+- Modified a bug in deleting frames
+
+ver.2.02.00 - May 6 2011
+==================================================
+- Added 'Default Delay' in Frame tab of Preferences
+- Added 'Selection by right dragging' in Tool tab of Preferences
+- Added 'Auto Save' in Save tab of Preferences
+- Added 'Alpha channel' in options of Batch Conversion
+- Modified a bug of frmae's properties
+- Added an opacity's value in percentage terms in layer's properties
+- Draw Text tool supported multi-line text
+- Modified a mouse cursor in Draw Text tool
+- Added OK button and Cancel button in Draw Text window
+- Modified a bug of a First Color
+
+ver.2.01.09 - February 9 2011
+==================================================
+- Added 'Backup' in Preferences
+- Modified a bug of export
+
+ver.2.01.08 - January 29 2011
+==================================================
+- Modified a bug that penpoint is left
+
+ver.2.01.07 - January 19 2011
+==================================================
+- Added sensitivity setting to pen and color replacer
+- Added 'Selected Frames' to frame's properties
+- Added 'Multiply' and 'Add' to Delay of frame's properties
+- Modified detail view of browser
+- Modified preview of browser
+
+ver.2.01.06 - December 11 2010
+==================================================
+- Modified saving tga
+- Modified Pasting layer
+- Modified loading process of browser
+
+ver.2.01.05 - August 27 2010
+==================================================
+- Modified docking of layer's window
+- Added Method for Single Palette in Properties
+- Modified Batch Conversion for .gal
+
+ver.2.01.04 - July 8 2010
+==================================================
+- Modified pasting image
+- Modified shortcut-key of 'Paste Layer'
+- Modified status bar
+- Modified saving/loading tga
+
+ver.2.01.03 - May 27 2010
+==================================================
+- Layer's functions - Add, Duplicate, Delete, Combine - supported multiple frames
+- 'Move Up' and 'Move Down' were added in Layer menu
+- First Color and Second Color supported transparent color
+- Modified algorithm of Oval
+- Modified Onion Skin
+- Modified Preview
+- Modified loading gif
+
+ver.2.01.02 - February 8 2010
+==================================================
+- Locked layers are not selected by 'Select All Layers'
+- Optimized 'Count Colors Used'
+- Modified loading AVI in 32 bpp format
+
+ver.2.01.01 - December 10 2009
+==================================================
+- Modified language system
+- Fixed a bug of toolbar in WindowsAero
+- Fixed a bug of fill function
+
+ver.2.01.00 - December 3 2009
+==================================================
+- Moved language resource to an external file
+- Modified interfaces of Effect, Rotate, Pasting RGB.
+- Added 'Mixed with Base Image' in DrawText
+- Added 'Synchronize Color of RGB Bar with Current Value' in Preferences
+- Added 'Palette Interface Size' in Preferences
+- Fixed a bug in combining layer
+- Fixed a bug in moving selection
+- Fixed a bug in locking layer
+
+ver.2.00.07 - November 9 2009
+==================================================
+- Changed directory of application's data files
+
+ver.2.00.06 - October 20 2009
+==================================================
+- Added 'Separate Animated Area' in Window menu
+- Modified Loupe
+- Fixed a bug in opening file
+
+ver.2.00.05 - September 3 2009
+==================================================
+- Fixed a bug of a status bar
+- Added Language in Preferences
+
+ver.2.00.04 - August 21 2009
+==================================================
+- Modified saving png
+
+ver.2.00.03 - July 9 2009
+==================================================
+- Fixed a bug of Cut
+- Fixed a bug of Select All
+
+ver.2.00.02 - July 8 2009
+==================================================
+- Added History window
+- Added Lock menu in layer list
+- Modified 'Combine Layers'
+- Fixed a bug of Copy
+- Modified layer list box
+- Modified Fill command
+- Modified locking layer
+
+ver.2.00.01 - June 30 2009
+==================================================
+- Modified so that selected image could move
+
+ver.2.00.00 - June 30 2009
+==================================================
+- Added a lock button in layer
+- Supports new color file formats(.act,.dpf)
+- Modified RGB slider
+- Modified HSL slider
+- Modified 'Combine' in layer
+
+ver.1.93.09 - May 19 2009
+==================================================
+- Modified saving gif
+- Modified high CPU process load of browser
+
+ver.1.93.08 - April 15 2009
+==================================================
+- Modified Loupe so that selection line is drawn
+- Modified preview
+
+ver.1.93.07 - March 4 2009
+==================================================
+- Modified text of new image's dialog-box
+- Modified font presets
+- Modified loading process of browser
+
+ver.1.93.06 - January 29 2009
+==================================================
+- Modified Batch Conversion
+
+ver.1.93.05 - January 27 2009
+==================================================
+- Added 'Save a Copy' in File menu
+- Added "Applies the above setting to also 'Paste New Image'" in Preferences
+- Modified exporting
+
+ver.1.93.04 - December 18 2008
+==================================================
+- Added 'Type' in 'Colors Depth'
+- Modified saving gif
+
+ver.1.93.03 - December 4 2008
+==================================================
+- Added 'Copy(32bpp)' in Edit menu
+- Added 'Maximum Undo Levels' in Preferences
+- Modified 'Load Palette'
+- Modified 'Fill'
+- Modified 'Magic Wand' and 'Selection By Color'
+- Fixed a bug of selection tool
+
+ver.1.93.02 - October 20 2008
+==================================================
+- Added 'Import From Combined Image' in File menu
+- Added 'Duplicate Image(s)' in Edit menu
+- Functions of 'All Frames' will not affect invisible layers
+- Selected area also will be copied into clipboard by 'Copy Display Image'
+- Modified Shortcut-key of 'Properties with Same Name'
+- Modified an error occurred in changing a current frame
+- Alpha channel of TGA was reverse
+- Modified loading AVI
+
+ver.1.93.01 - August 31 2008
+==================================================
+- Added 'Properties with Same Name' in Layer menu
+- Added 'Sets Transparent Color in Pasting layer' in Preferences
+- Added 'Play' in Preview menu
+- Modified Resample
+- Modified Loupe
+- Modified Pasting layer
+
+ver.1.93 - March 31 2008
+==================================================
+- Added 'Loupe'
+- Added 'Delete alpha channel when capturing screen' in Preferences
+- Fixed memory leak when frames are deleted
+- Modified so that frames with different canvas size can be pasted
+- Modified preview
+- Modified Batch Conversion
+
+ver.1.92 - October 29 2007
+==================================================
+- Modified a preview
+
+ver.1.91 - October 26 2007
+==================================================
+- Modified a preview
+
+ver.1.90 - October 25 2007
+==================================================
+- Modified a preview
+
+ver.1.89 - October 24 2007
+==================================================
+- Modified loading gif
+- Modified a preview
+
+ver.1.88 - September 5 2007
+==================================================
+- Modified a preview
+
+ver.1.87 - August 25 2007
+==================================================
+- Fixed a bug in closing all windows
+- Added 'Slope' function
+- Fixed a bug in loading AVI
+- Modified a preview
+- Added Preset in New image window
+
+ver.1.86 - June 12 2007
+==================================================
+- Fixed a bug in opening a file
+
+ver.1.85 - June 9 2007
+==================================================
+- Modified selection tools
+- Added Scroll functions in shortcut-keys
+- Added 'Input' in Custom-Grid menu
+- Added Min and Max in Auto zoom
+
+ver.1.84 - May 31 2007
+==================================================
+- Modified Resample
+- Modified drawing text
+- Modified duplicating frame and layer
+- Modified processing multiple instances
+- Modified a preview
+- Changed selection tools
+
+ver.1.83 - January 10 2007
+==================================================
+- Modified loading gif
+- Fixed a bug that magnification adjusting isn't workable in a maximized window
+- Keeps a last saved file's extension in memory
+- Copies hexadecimal to clipboard in copying RGB value
+- Makes a operation of changing a color value a undoable command
+- Displays a preview as full-color image
+- Added 'Frame Rate' to opening avi window
+- Added 'by Percent' to resample window
+- Keeps a status of Effect window in memory
+- Changed locations of directories which are used by an application
+
+ver.1.82 - February 8 2006
+==================================================
+- Fixed memory error
+
+ver.1.81 - February 6 2006
+==================================================
+- Modified loading jpeg
+- Modified saving tga
+
+ver.1.80 - January 9 2006
+==================================================
+- Modified save dialogbox
+
+ver.1.79 - December 30 2005
+==================================================
+- Fixed a bug caused in saving a file when a program terminates
+- Fixed memory leak
+- Modified position of dialog-boxes
+
+ver.1.78 - June 20 2005
+==================================================
+- Modified Color Depth
+- Modified process of loading a broken file
+- Modified saving/loading gif
+
+ver.1.77 - May 23 2005
+==================================================
+- Modified Greascale
+- Modified hiding tool-bars
+- Modified Import From Multiple Files
+- Modified process of changing color palette
+
+ver.1.76 - March 24 2005
+==================================================
+- Added Bookmark functions to Browser
+- Modified processing position of toolbar
+
+ver.1.75 - March 23 2005
+==================================================
+- Modified saving position of toolbar
+- Modified showing a dialog-box
+
+ver.1.74 - March 9 2005
+==================================================
+- Modified order of tool-buttons
+
+ver.1.73 - March 7 2005
+==================================================
+- Added "Toolbar width in a hidden state" in Preferences
+- Added "Delay time to hide toolbar" in Preferences
+- Modified docking frame window
+
+ver.1.72 - March 4 2005
+==================================================
+- Added "Auto Hide" in tool-bars
+- Added "Keep Away From Cursor" in preview window
+- Modified painting process
+
+ver.1.71 - March 1 2005
+==================================================
+- Modified help file
+
+ver.1.70 - February 16 2005
+==================================================
+- Modified mouse wheel control
+
+ver.1.69 - February 14 2005
+==================================================
+- Modified dragging frame
+- Modified control of a focus for edit box of RGB value
+
+ver.1.68 - January 28 2005
+==================================================
+- Released English edition

@@ -1,0 +1,12 @@
+GraphicsGale Licensing Agreement
+
+GraphicsGale ("the package") includes a software and some documentation. HUMANBALANCE Ltd. has the copyright of the package.
+
+You can not distribute the package without our permission.
+You may not loan, lease, alter, decompile, disassemble, decrypt, extract or otherwise reverse-engineer the Software. If you run afoul of this licensing agreement, right of use for the Software lapses automatically, and you must delete all files of the Software.
+
+The package is provided as is, without warranty of any kind. The author shall not be liable for damages of any kind. Use of this software indicates you agree to this.
+
+
+HumanBalance Ltd.
+http://www.humanbalance.net/

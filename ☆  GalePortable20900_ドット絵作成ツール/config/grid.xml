@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Grids>
+  <Grid StartX="0" StartY="0" X="8" Y="8" Color="0" Visible="1" />
+  <Grid StartX="0" StartY="0" X="16" Y="16" Color="0" Visible="1" />
+  <Grid StartX="0" StartY="0" X="32" Y="32" Color="0" Visible="1" />
+  <Grid StartX="0" StartY="0" X="64" Y="64" Color="0" Visible="1" />
+  <Grid StartX="0" StartY="0" X="50" Y="50" Color="0" Visible="1" />
+  <Grid StartX="0" StartY="0" X="65" Y="65" Color="0" Visible="1" />
+  <Grid StartX="0" StartY="0" X="100" Y="100" Color="0" Visible="1" />
+</Grids>
