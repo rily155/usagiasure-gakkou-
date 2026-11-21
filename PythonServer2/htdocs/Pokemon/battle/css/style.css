@@ -1,0 +1,436 @@
+* {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: #20272c;
+            color: #edf2f2;
+            font-family: monospace;
+            display: grid;
+            place-items: center;
+            min-height: 100vh
+        }
+
+        main {
+            width: min(960px, 98vw)
+        }
+
+        h1 {
+            font-size: 18px;
+            letter-spacing: 2px
+        }
+
+        #game {
+            container-type: inline-size;
+            position: relative;
+            aspect-ratio: 1888/1066;
+            overflow: hidden;
+            background: #d9f7ce;
+            border: 4px solid #41404e;
+            box-shadow: 0 12px 40px #0007;
+            color: #202522;
+            image-rendering: pixelated
+        }
+
+        .field {
+            position: absolute;
+            inset: 0 0 23.92%;
+            background: url('../assets/base.png') center/100% 100%
+        }
+
+        .ground {
+            position: absolute;
+            width: 36.3%
+        }
+
+        .enemy-ground {
+            right: 7%;
+            top: 45%
+        }
+
+        .my-ground {
+            left: 9%;
+            bottom: 0
+        }
+
+        .mon {
+            position: absolute;
+            width: 25%;
+            aspect-ratio: 1;
+            object-fit: contain;
+            image-rendering: pixelated;
+            transition: opacity .25s
+        }
+
+        .enemy {
+            right: 12.5%;
+            bottom: 37%
+        }
+
+        .mine {
+            left: 14.5%;
+            bottom: -9%
+        }
+
+        .status {
+            position: absolute;
+            width: 36%;
+            background: #ffffe6;
+            border: 0.55cqw solid #344a35;
+            border-radius: 1.4cqw;
+            padding: 1.1cqw 1.5cqw;
+            box-shadow: 0.6cqw .6cqw #819978;
+            font-size: 2.5cqw;
+            font-weight: bold
+        }
+
+        .enemy-status {
+            left: 6%;
+            top: 10%
+        }
+
+        .my-status {
+            right: 5%;
+            bottom: 7%
+        }
+
+        .line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center
+        }
+
+        .hp {
+            display: flex;
+            align-items: center;
+            gap: .5cqw;
+            margin-top: .7cqw;
+            background: #344a35;
+            border-radius: 1cqw;
+            padding: .4cqw;
+            color: #f8c554;
+            font-size: 1.5cqw
+        }
+
+        .track {
+            height: 1.1cqw;
+            background: #eee;
+            flex: 1;
+            border-radius: 1cqw;
+            overflow: hidden
+        }
+
+        .fill {
+            height: 100%;
+            background: #52c977;
+            transition: width .35s, background .3s
+        }
+
+        .numbers {
+            text-align: right;
+            font-size: 2cqw;
+            margin-top: .4cqw
+        }
+
+        .exp {
+            height: .5cqw;
+            background: #b7c5ad;
+            margin-top: .5cqw
+        }
+
+        .exp:before {
+            content: '';
+            display: block;
+            width: var(--exp-progress, 0%);
+            height: 100%;
+            background: #49a9da
+        }
+
+        .bottom {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 23.92%;
+            background: url('../assets/menu1.png') center/100% 100%;
+            display: flex;
+            align-items: stretch;
+            padding: 2% 2.5%;
+            gap: 1%;
+            font-size: 3cqw
+        }
+
+        .message {
+            flex: 1;
+            color: white;
+            text-shadow: 1px 2px #355657;
+            padding: 1.1cqw;
+            white-space: pre-line;
+            line-height: 1.65;
+            align-self: center
+        }
+
+        .commands {
+            width: 43%;
+            border: .6cqw solid #525063;
+            border-radius: 1.4cqw;
+            background: #fffef7;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: .5cqw;
+            gap: .2cqw
+        }
+
+        .commands[hidden] {
+            display: none
+        }
+
+        button {
+            font: inherit;
+            cursor: pointer;
+            border: 0;
+            background: none;
+            color: inherit;
+            text-align: left;
+            padding: .7cqw 1cqw;
+            white-space: nowrap
+        }
+
+        button.selected:before {
+            content: '▶';
+            position: absolute;
+            left: 0
+        }
+
+        button.selected {
+            position: relative;
+            padding-left: 2.8cqw;
+            background: #e6eddc;
+            border-radius: .5cqw
+        }
+
+        button:disabled {
+            opacity: .45
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            font-size: 13px
+        }
+
+        .controls button,
+        .controls select {
+            font: inherit;
+            padding: 8px;
+            color: white;
+            background: #39454c;
+            border: 1px solid #65727a;
+            border-radius: 5px
+        }
+
+        .trainer {
+            position: absolute;
+            bottom: 0;
+            width: 27.43%;
+            aspect-ratio: 96/72;
+            background: url('../assets/trainer.png') 0 0/500% 100%;
+            background-repeat: no-repeat;
+            left: 8.87%;
+            image-rendering: pixelated
+        }
+
+        .ball {
+            position: absolute;
+            width: 3.6%;
+            aspect-ratio: 1;
+            background: url('../assets/monster-ball01.png') 0 0/100% auto;
+            image-rendering: pixelated;
+            left: 10%;
+            bottom: 27%;
+            animation: none;
+            transform-origin: center center
+        }
+
+        .spark {
+            position: absolute;
+            left: 24%;
+            bottom: 28%;
+            width: 4%;
+            aspect-ratio: 1;
+            background: url('../assets/ball-effect.png') 0 0/762.5% 100%;
+            animation: spark .5s steps(7) forwards
+        }
+
+        @keyframes spark {
+            to {
+                background-position: 100% 0;
+                opacity: 0
+            }
+        }
+
+        @keyframes throw {
+            50% {
+                transform: translate(7cqw, -12cqw) rotate(180deg)
+            }
+
+            100% {
+                transform: translate(0, -2cqw) rotate(360deg)
+            }
+        }
+
+        .hit {
+            animation: hit .35s 2
+        }
+
+        @keyframes hit {
+            50% {
+                opacity: .15
+            }
+        }
+
+        .lunge {
+            animation: lunge .25s
+        }
+
+        @keyframes lunge {
+            50% {
+                transform: translate(var(--dx), var(--dy))
+            }
+        }
+
+        [hidden] {
+            display: none !important
+        }
+    html.embedded main {width:100%; max-width:100%;} html.embedded h1,html.embedded .controls {display:none} html.embedded #game {border:0;box-shadow:none} .commands {overflow:auto} .commands button {white-space:normal; font-size:2.6cqw}
+
+/* 味方ポケモン登場時の拡散光 */
+.sendout-glow {
+    position: absolute;
+    z-index: 5;
+    left: 26%;
+    bottom: 30%;
+    width: 5%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,252,190,.95) 24%, rgba(255,232,125,.65) 45%, rgba(255,255,255,0) 72%);
+    box-shadow: 0 0 2cqw .7cqw rgba(255,255,230,.8);
+    animation: sendout-glow-expand 520ms ease-out both;
+}
+@keyframes sendout-glow-expand {
+    0% { transform: translate(-50%,50%) scale(.25); opacity: 0; }
+    18% { opacity: 1; }
+    62% { transform: translate(-50%,50%) scale(5); opacity: .95; }
+    100% { transform: translate(-50%,50%) scale(8); opacity: 0; }
+}
+
+/* モックの技選択UI・捕獲ボール */
+#captureBall {
+    position: absolute;
+    width: 5%;
+    aspect-ratio: 1;
+    right: 23%;
+    bottom: 45%;
+    z-index: 5;
+    background: url('../assets/monster-ball01.png') center top/100% auto no-repeat;
+    image-rendering: pixelated;
+    transform-origin: 50% 80%;
+}
+
+#captureInfo {
+    font-size: 14px;
+    color: #bfe7b9;
+}
+
+.commands button {
+    white-space: normal;
+    font-size: 2.45cqw;
+}
+
+/* 技選択画面：技一覧70%、右側にPPとタイプを表示 */
+#game.is-move-select .bottom {
+    gap: 0;
+    padding: 1.2% 2%;
+    background: #f9faf2;
+    border-top: .65cqw solid #4c5961;
+}
+
+#game.is-move-select .message {
+    display: none;
+}
+
+#game.is-move-select .commands {
+    flex: 0 0 70%;
+    width: 70%;
+    min-width: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: .25cqw;
+    padding: .4cqw;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    overflow: hidden;
+}
+
+#game.is-move-select .commands button {
+    min-width: 0;
+    width: 100%;
+    font-size: clamp(11px, 2.35cqw, 23px);
+    line-height: 1.25;
+    padding: .4cqw .2cqw .4cqw 2.2cqw;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+}
+
+#game.is-move-select .commands button.selected {
+    padding-left: 2.2cqw;
+}
+
+#game.is-move-select .commands button.selected::before {
+    left: .3cqw;
+}
+
+.move-details {
+    flex: 0 0 30%;
+    width: 30%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: .3cqw;
+    border-left: .5cqw solid #525063;
+    color: #26332c;
+    background: #fffef7;
+    font-size: clamp(10px, 1.7cqw, 18px);
+}
+
+.move-details-label {
+    font-weight: bold;
+    font-size: .9em;
+}
+
+.move-details-value {
+    font-size: 1.2em;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.move-type {
+    font-size: 1.05em;
+}
+
+/* 捕獲ボールはJavaScript側で投球・左右の揺れを制御する。
+   共通 .ball の投球アニメーションとの競合を防止する。 */
+#captureBall {
+    animation: none;
+    transform-origin: 50% 85%;
+}
+

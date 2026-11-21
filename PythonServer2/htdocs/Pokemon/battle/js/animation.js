@@ -1,0 +1,1 @@
+async function pause(t, token) { message(t); await wait(750); return token === epoch } async function anim(el, cls, token) { el.classList.add(cls); await wait(350); if (token !== epoch) return false; el.classList.remove(cls); return true }

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Pokémon Battle Mock</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <main>
+        <h1>POKÉMON / BATTLE MOCK</h1>
+        <div id="game">
+            <div class="field"><img class="ground enemy-ground" src="assets/ground-enemy.png"><img
+                    class="ground my-ground" src="assets/ground-my.png"><img id="enemy" class="mon enemy"
+                    alt="敵ポケモン"><img id="mine" class="mon mine" alt="味方ポケモン">
+                <div id="trainer" class="trainer" hidden></div>
+                <div id="ball" class="ball" hidden></div>
+                <div id="spark" class="spark" hidden></div><div id="captureBall" hidden></div>
+                <div id="sendoutGlow" class="sendout-glow" hidden></div>
+                <div class="status enemy-status">
+                    <div class="line"><span id="en"></span><span id="enemyLevel">Lv.5</span></div>
+                    <div class="hp">HP<div class="track">
+                            <div id="eh" class="fill"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="status my-status" id="myStatus">
+                    <div class="line"><span id="mn"></span><span id="heroLevel">Lv.5</span></div>
+                    <div class="hp">HP<div class="track">
+                            <div id="mh" class="fill"></div>
+                        </div>
+                    </div>
+                    <div id="num" class="numbers"></div>
+                    <div class="exp"></div>
+                </div>
+            </div>
+            <div class="bottom">
+                <div id="msg" class="message" aria-live="polite"></div>
+                <div id="menu" class="commands"></div>
+                <div id="moveDetails" class="move-details" hidden aria-live="polite">
+                    <div class="move-details-label">PP</div>
+                    <div id="movePP" class="move-details-value">-- / --</div>
+                    <div class="move-details-label">タイプ</div>
+                    <div id="moveType" class="move-details-value move-type">---</div>
+                </div>
+            </div>
+        </div>
+        <div class="controls"><span>↑ ↓ ← →：選択　Z / Enter：決定　X / Esc：戻る</span><label>味方 <select id="choice">
+                    <option value="25">ピカチュウ</option>
+                    <option value="133">イーブイ</option>
+                    <option value="155">ヒノアラシ</option>
+                </select></label><button id="reset">バトルやり直し</button></div>
+    </main>
+    <script src="js/state.js"></script>
+    <script src="js/view.js"></script>
+    <script src="js/damage.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/animation.js"></script>
+    <script src="js/actions.js"></script>
+    <script src="js/capture-rules.js"></script>
+    <script src="js/capture-animation.js"></script>
+    <script src="js/capture-action.js"></script>
+    <script src="js/switch.js"></script>
+    <script src="js/send-out-animation.js"></script>
+    <script src="js/intro.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

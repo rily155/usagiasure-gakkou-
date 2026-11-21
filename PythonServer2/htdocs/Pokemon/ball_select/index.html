@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>最初のボールを選ぼう</title>
+    <style>
+        :root {
+            color-scheme: dark
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #171d27;
+            color: #f8f8f8;
+            font-family: 'Courier New', monospace;
+            display: grid;
+            place-items: center;
+            padding: 16px
+        }
+
+        .shell {
+            width: min(100%, 780px)
+        }
+
+        h1 {
+            font-size: clamp(17px, 3vw, 24px);
+            text-align: center;
+            margin: 0 0 18px
+        }
+
+        .game {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 79/51;
+            overflow: hidden;
+            background: #e7e6ee;
+            border: 5px solid #f5f5f5;
+            box-shadow: 0 0 0 5px #454957;
+            image-rendering: pixelated
+        }
+
+        .desk {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('assets/desk.png');
+            background-size: 100% auto;
+            background-repeat: no-repeat;
+            image-rendering: pixelated
+        }
+
+        .ball {
+            position: absolute;
+            width: 14%;
+            height: 23%;
+            top: 29%;
+            border: 0;
+            background: none;
+            padding: 0;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            image-rendering: pixelated
+        }
+
+        .ball img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated
+        }
+
+        .ball[data-index="0"] {
+            left: 31%
+        }
+
+        .ball[data-index="1"] {
+            left: 46%
+        }
+
+        .ball[data-index="2"] {
+            left: 61%
+        }
+
+        .ball[aria-pressed="true"] img {
+            animation: ball-blink .85s steps(1, end) infinite
+        }
+
+        @keyframes ball-blink {
+
+            0%,
+            49% {
+                opacity: 1
+            }
+
+            50%,
+            100% {
+                opacity: .25
+            }
+        }
+
+        .game.is-finished .ball img {
+            animation: none
+        }
+
+        .ball:focus-visible {
+            outline: 3px dashed #1b2830;
+            outline-offset: 4px
+        }
+
+        .cursor {
+            position: absolute;
+            width: 9%;
+            top: 7%;
+            left: 35%;
+            transform: translateX(-50%);
+            pointer-events: none;
+            image-rendering: pixelated;
+            animation: bob .7s steps(2) infinite
+        }
+
+        .cursor img {
+            width: 100%;
+            image-rendering: pixelated
+        }
+
+        @keyframes bob {
+            50% {
+                transform: translate(-50%, 5px)
+            }
+        }
+
+        .message {
+            position: absolute;
+            left: 5%;
+            right: 5%;
+            bottom: 3%;
+            background: #fff;
+            color: #20232a;
+            border: 4px solid #343641;
+            box-shadow: inset 0 0 0 3px #d5d5db;
+            padding: 12px 16px;
+            min-height: 21%;
+            font-size: clamp(12px, 2.3vw, 19px);
+            line-height: 1.6;
+            display: flex;
+            align-items: center
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 22px
+        }
+
+        .controls button,
+        .confirm button {
+            background: #fff;
+            color: #20232a;
+            border: 3px solid #353948;
+            border-radius: 4px;
+            font: 700 17px monospace;
+            padding: 10px 18px;
+            cursor: pointer
+        }
+
+        .controls button:hover,
+        .confirm button:hover {
+            background: #e0ebfc
+        }
+
+        .hint {
+            text-align: center;
+            color: #bfc6d2;
+            font-size: 13px;
+            margin-top: 16px
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background: #10151dcf;
+            display: grid;
+            place-items: center;
+            padding: 18px
+        }
+
+        .overlay[hidden] {
+            display: none
+        }
+
+        .confirm {
+            background: #fff;
+            color: #24252d;
+            border: 5px double #333;
+            width: min(95%, 430px);
+            padding: 18px;
+            text-align: center;
+            font-size: clamp(14px, 2.5vw, 19px)
+        }
+
+        .confirm img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            image-rendering: pixelated
+        }
+
+        .confirm .actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap
+        }
+
+        .confirm button {
+            font-size: 15px
+        }
+
+        .confirm button.primary {
+            background: #cbe7cb
+        }
+    </style>
+</head>
+
+<body>
+    <main class="shell">
+        <h1>さいしょの ポケモンを えらぼう！</h1>
+        <section class="game" aria-label="ボール選択画面">
+            <div class="desk"></div><button class="ball" data-index="0" aria-label="1番目のボール"><img
+                    src="assets/ball-1.png" alt=""></button><button class="ball" data-index="1"
+                aria-label="2番目のボール"><img src="assets/ball-2.png" alt=""></button><button class="ball" data-index="2"
+                aria-label="3番目のボール"><img src="assets/ball-3.png" alt=""></button>
+            <div class="cursor" aria-hidden="true"><img src="assets/select.png" alt=""></div>
+            <div class="message" id="message" aria-live="polite">どの ボールを えらぶ？</div>
+            <div class="overlay" id="overlay" hidden>
+                <div class="confirm"><img id="chosenImg" src="assets/pikachu.png" alt="ピカチュウ">
+                    <p id="confirmText"></p>
+                    <div class="actions"><button class="primary" id="yes">これに きめた！</button><button id="no">もどる</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="controls"><button id="prev">◀ ひだり</button><button id="choose">けってい</button><button id="next">みぎ
+                ▶</button></div>
+        <p class="hint">← →：移動　Space / Enter：決定　Esc：戻る　クリック・タップにも対応</p>
+    </main>
+    <script>
+        (() => {
+            'use strict';
+
+            // HTML要素の取得
+            const balls = [...document.querySelectorAll('.ball')];
+            const cursor = document.querySelector('.cursor');
+            const overlay = document.querySelector('#overlay');
+            const message = document.querySelector('#message');
+
+            // 選択状態
+            let selected = 0;
+            let finished = false;
+
+            const pokemon = [
+                { id: 25, name: 'ピカチュウ', image: 'assets/pikachu.png' },
+                { id: 133, name: 'イーブイ', image: 'assets/eevee.png' },
+                { id: 155, name: 'ヒノアラシ', image: 'assets/hinoarashi.png' }
+            ];
+
+            // 選択状態を画面に反映
+            function render() {
+                cursor.style.left =
+                    balls[selected].style.left ||
+                    ['31%', '46%', '61%'][selected];
+
+                if (finished) {
+                    message.textContent =
+                        `${pokemon[selected].name}に きめた！`;
+                } else {
+                    message.textContent =
+                        `${pokemon[selected].name}を えらんでいる。`;
+                }
+
+                balls.forEach((ball, index) => {
+                    ball.setAttribute(
+                        'aria-pressed',
+                        String(index === selected)
+                    );
+                });
+            }
+
+            // ボールの選択位置を移動
+            function move(n) {
+                if (!overlay.hidden || finished) {
+                    return;
+                }
+
+                selected = (selected + n + balls.length) % balls.length;
+                render();
+            }
+
+            // ボールを選択して確認画面を表示
+            function choose() {
+                if (finished || !overlay.hidden) {
+                    return;
+                }
+
+                const chosenImg = document.querySelector('#chosenImg');
+                chosenImg.src = pokemon[selected].image;
+                chosenImg.alt = pokemon[selected].name;
+
+                document.querySelector('#confirmText').textContent =
+                    `${pokemon[selected].name}で いい？`;
+
+                overlay.hidden = false;
+            }
+
+            // 確認画面を閉じる
+            function close() {
+                overlay.hidden = true;
+            }
+
+            // ボールの選択を確定
+            function finish() {
+                overlay.hidden = true;
+                finished = true;
+
+                document.querySelector('.game')
+                    .classList.add('is-finished');
+
+                render();
+
+                if (window.parent !== window) {
+                    window.parent.postMessage({type:'pokemon-starter-selected', pokemonId:pokemon[selected].id}, window.location.origin);
+                }
+                window.dispatchEvent(
+                    new CustomEvent('ball-selected', {
+                        detail: {
+                            index: selected,
+                            ballId: selected + 1,
+                            pokemonId: pokemon[selected].id,
+                            pokemonName: pokemon[selected].name
+                        }
+                    })
+                );
+            }
+
+            // ボールをマウスでクリック
+            balls.forEach((ball, index) => {
+                ball.addEventListener('click', () => {
+                    if (finished || !overlay.hidden) {
+                        return;
+                    }
+
+                    selected = index;
+                    render();
+                    choose();
+                });
+            });
+
+            // 画面のボタン操作
+            document.querySelector('#prev').onclick = () => {
+                move(-1);
+            };
+
+            document.querySelector('#next').onclick = () => {
+                move(1);
+            };
+
+            document.querySelector('#choose').onclick = () => {
+                choose();
+            };
+
+            document.querySelector('#yes').onclick = () => {
+                finish();
+            };
+
+            document.querySelector('#no').onclick = () => {
+                close();
+            };
+
+            // キーボード操作
+            window.addEventListener('keydown', (e) => {
+                const controlKeys = [
+                    'ArrowLeft',
+                    'ArrowRight',
+                    ' ',
+                    'Enter',
+                    'Escape'
+                ];
+
+                if (controlKeys.includes(e.key)) {
+                    e.preventDefault();
+                }
+
+                // Escapeキー：確認画面を閉じる
+                if (e.key === 'Escape') {
+                    close();
+                    return;
+                }
+
+                // 確認画面が表示されている場合
+                if (!overlay.hidden) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        finish();
+                    }
+
+                    return;
+                }
+
+                // 左キー
+                if (e.key === 'ArrowLeft') {
+                    move(-1);
+                }
+
+                // 右キー
+                if (e.key === 'ArrowRight') {
+                    move(1);
+                }
+
+                // EnterまたはSpaceキー
+                if (e.key === 'Enter' || e.key === ' ') {
+                    choose();
+                }
+            });
+
+            // 初期表示
+            render();
+
+        })();
+    </script>
+</body>
+
+</html>
