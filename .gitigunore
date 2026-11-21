@@ -1,0 +1,6 @@
+Pokemon-Get/pokemon_api/gen2_learansets_output/*
+Pokemon-Get/pokemon_api/gen2_items_output/*
+Pokemon-Get/pokemon_api/gen2_evolutions_output/*
+Pokemon-Get/pokemon_api/pokeapi_csv_cache/*
+Pokemon-Get/pokemon_api/pokemon_sprites/*
+.venv

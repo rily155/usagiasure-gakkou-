@@ -1,0 +1,74 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ゲームボーイエミュレーター開発ガイド</title><style> *{box-sizing:border-box}body{margin:0;background:#f1f5f9;color:#243349;font:16px/1.85 system-ui,sans-serif}header{background:#14283e;color:white;padding:48px max(6vw,24px)}header p{color:#c5d9e8}h1{font-size:clamp(26px,4vw,42px);margin:0}main{max-width:1000px;margin:auto;padding:24px}section,nav{background:white;border:1px solid #dce5ed;border-radius:12px;padding:24px;margin:0 0 20px}h2{margin-top:0;color:#174c73;border-bottom:2px solid #e0eaf2;padding-bottom:8px}h3{color:#245774}a{color:#12619a}table{border-collapse:collapse;width:100%;font-size:14px}td,th{border:1px solid #dce5ed;padding:10px;text-align:left}th{background:#eaf2f8}pre{background:#182a3d;color:#e4eef6;padding:18px;overflow:auto;border-radius:8px;line-height:1.6}code{font-family:monospace} .flow{display:grid;gap:8px;text-align:center;max-width:700px;margin:auto}.node{border:1px solid #a8c7de;background:#edf5fb;padding:12px;border-radius:8px}.arrow{color:#39759e;font-size:22px}.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}.note{border-left:4px solid #d39a38;background:#fff8e9;padding:12px}.scroll{overflow-x:auto}footer{text-align:center;color:#52667b;padding:20px}button{padding:9px 14px;border:1px solid #9cb8cd;background:white;border-radius:6px;cursor:pointer} @media print{body{background:white}section{break-inside:avoid}nav,button{display:none}header{padding:20px;color:black;background:white}header p{color:black}}</style></head><body><header><p>TECHNICAL GUIDE / GB → GBC</p><h1>ゲームボーイエミュレーター開発ガイド</h1><p>Vanilla JavaScript + Canvas で作るブラウザ版エミュレーターと、ポケモンのゲーム解析リポジトリ</p></header><main><nav><strong>目次</strong><ol><li><a href="#goal">開発方針</a></li><li><a href="#architecture">仕組みとハードウェア</a></li><li><a href="#files">ファイル構成・Webサーバ</a></li><li><a href="#cpu">CPU実装の基本</a></li><li><a href="#roadmap">開発ロードマップ</a></li><li><a href="#repos">ゲームのリポジトリとビルド</a></li><li><a href="#data">マスターデータへの活用</a></li><li><a href="#refs">参考資料・注意事項</a></li></ol><button onclick="window.print()">印刷 / PDF保存</button></nav>
+<section id="goal"><h2>01 開発方針</h2><p>外部のエミュレーターライブラリやフレームワークを使わず、HTML・CSS・JavaScript・Canvasでゲーム機を再現する。まず初代GBを実装し、動作テストを経てGBCに拡張する。最終目標は手元の適法なクリスタルROMを起動すること。</p><p>既存のPythonWebServerは静的ファイルを配信するだけでよい。ゲーム処理はブラウザ内で実行する。現在のPhaser製RPGとは独立したアプリとして管理する。</p></section>
+<section id="architecture"><h2>02 仕組みとハードウェア</h2><div class="flow"><div class="node">ROM (.gb / .gbc) — 機械語・画像・音楽データ</div><div class="arrow">↓</div><div class="node">Cartridge / Memory Bus — アドレスに応じて読み書きを振り分ける</div><div class="arrow">↕</div><div class="cols"><div class="node">CPU<br>命令実行</div><div class="node">PPU<br>画面描画</div><div class="node">APU<br>音声</div><div class="node">Timer / IRQ<br>時間・割り込み</div><div class="node">Joypad<br>入力</div><div class="node">MBC<br>バンク切替</div></div><div class="arrow">↓</div><div class="node">Canvas / Web Audio / Keyboard / IndexedDB</div></div><h3>GBとGBCの違い</h3><div class="scroll"><table><tr><th>項目</th><th>GB</th><th>GBC</th></tr><tr><td>CPU</td><td>SM83 約4.19 MHz</td><td>通常4.19 / 倍速8.39 MHz</td></tr><tr><td>画面</td><td>160×144、4階調</td><td>160×144、カラー</td></tr><tr><td>WRAM</td><td>8 KiB</td><td>32 KiB</td></tr><tr><td>VRAM</td><td>8 KiB</td><td>16 KiB</td></tr><tr><td>描画周期</td><td colspan="2">70224ドット/フレーム、約59.73 FPS（倍速時もPPUの基本周期は同じ）</td></tr></table></div><h3>メモリマップ</h3><table><tr><th>アドレス</th><th>用途</th></tr><tr><td>0000–7FFF</td><td>カートリッジROM / MBC制御</td></tr><tr><td>8000–9FFF</td><td>VRAM</td></tr><tr><td>A000–BFFF</td><td>外部RAM等</td></tr><tr><td>C000–DFFF</td><td>WRAM</td></tr><tr><td>E000–FDFF</td><td>エコーRAM</td></tr><tr><td>FE00–FE9F</td><td>OAM</td></tr><tr><td>FEA0–FEFF</td><td>使用不可領域</td></tr><tr><td>FF00–FF7F</td><td>I/Oレジスタ</td></tr><tr><td>FF80–FFFE</td><td>HRAM</td></tr><tr><td>FFFF</td><td>割り込み許可</td></tr></table></section>
+<section id="files"><h2>03 ファイル構成・Webサーバ</h2><pre>PythonWebServer/
+└── htdocs/
+    ├── Pokemon/
+    └── GameBoyEmulator/
+        ├── index.html
+        ├── style.css
+        └── js/
+            ├── main.js
+            ├── core/
+            │   ├── GameBoy.js
+            │   ├── CPU.js
+            │   ├── Memory.js
+            │   ├── Cartridge.js
+            │   ├── MBC.js
+            │   ├── PPU.js
+            │   ├── APU.js
+            │   ├── Timer.js
+            │   └── Joypad.js
+            └── ui/
+                ├── Renderer.js
+                ├── Debugger.js
+                └── SaveManager.js</pre><p>起動例：<code>http://localhost:8080/GameBoyEmulator/</code>（ポートは実際の設定に合わせる）。単体検証ならフォルダ内で <code>python -m http.server 8080</code> を実行する。</p><h3>ROM読み込み</h3><pre>&lt;input type="file" id="rom" accept=".gb,.gbc"&gt;
+&lt;canvas id="screen" width="160" height="144"&gt;&lt;/canvas&gt;
+&lt;script type="module"&gt;
+ document.querySelector('#rom').onchange = async (event) =&gt; {
+   const file = event.target.files[0];
+   if (!file) return;
+   const rom = new Uint8Array(await file.arrayBuffer());
+   console.log('ROM size:', rom.length);
+ };
+&lt;/script&gt;</pre><p>ローカルファイル選択ならROMをWebサーバへアップロードする必要はない。Canvasは整数倍拡大し、CSSの image-rendering: pixelated を指定する。</p></section>
+<section id="cpu"><h2>04 CPU実装の基本</h2><p>PC（プログラムカウンタ）から命令を取得し、レジスタを更新して消費クロックを返す。以下は学習用の一部命令のみの実装。</p><pre>class CPU {
+  constructor(bus) {
+    this.bus = bus;
+    this.a = 0; this.f = 0; this.pc = 0;
+  }
+  fetch() {
+    const value = this.bus.read(this.pc);
+    this.pc = (this.pc + 1) &amp; 0xffff;
+    return value;
+  }
+  step() {
+    const op = this.fetch();
+    switch (op) {
+      case 0x00: return 4; // NOP
+      case 0x3e: this.a = this.fetch(); return 8;
+      case 0x3c: { // INC A
+        const old = this.a;
+        this.a = (old + 1) &amp; 255;
+        this.f = (this.f &amp; 0x10) |
+          (this.a === 0 ? 0x80 : 0) |
+          ((old &amp; 15) === 15 ? 0x20 : 0);
+        return 4;
+      }
+      default: throw Error('Unsupported opcode: ' + op);
+    }
+  }
+}</pre><p>本実装では全有効命令・CB拡張命令、割り込み、HALT、STOP、条件分岐、正確なタイミング等が必要。起動ROMを使わない場合は機種に応じた初期状態も設定する。</p><h3>実行ループ</h3><div class="flow"><div class="node">CPU.step() → 消費クロック</div><div class="arrow">↓</div><div class="node">Timer / PPU / APU を進める・割り込み処理</div><div class="arrow">↓</div><div class="node">フレーム完成 → Canvasに転送 → 次のフレーム</div></div><p>requestAnimationFrame は画面更新の契機として使い、実機時間はクロックで管理する。精度向上には命令内のバスアクセス単位の同期も必要。</p></section>
+<section id="roadmap"><h2>05 開発ロードマップ</h2><table><tr><th>段階</th><th>実装</th><th>完了条件</th></tr><tr><td>1</td><td>ROMヘッダ・デバッグUI</td><td>タイトル、ROMサイズ、MBC種別を表示</td></tr><tr><td>2</td><td>CPU・メモリ</td><td>自作テスト命令を実行</td></tr><tr><td>3</td><td>全CPU命令・タイマー・割り込み</td><td>CPUテストROMを通過</td></tr><tr><td>4</td><td>PPU・DMA・入力</td><td>GBテストROMの画面表示・操作</td></tr><tr><td>5</td><td>MBC1/3/5・セーブ</td><td>対応GBソフトの起動・保存</td></tr><tr><td>6</td><td>APU・同期</td><td>音声と描画の安定</td></tr><tr><td>7</td><td>GBC拡張</td><td>カラー、VRAM/WRAMバンク、HDMA、倍速</td></tr><tr><td>8</td><td>MBC3 RTC・互換性</td><td>クリスタルの起動・戦闘・保存・時計の検証</td></tr></table><p>セーブRAMとRTCはIndexedDBに保存する設計を推奨。Web Audioはユーザーの操作後に開始。テストROMは配布元の条件を確認する。</p></section>
+<section id="repos"><h2>06 ゲームのリポジトリとビルド</h2><p>pretのプロジェクトはゲームを解析し、ソースとして再構築する非公式プロジェクト。エミュレーターとは別物である。</p><table><tr><th>リポジトリ</th><th>対象</th><th>主言語 / 出力</th></tr><tr><td><a href="https://github.com/pret/pokered">pokered</a></td><td>赤・青</td><td>ASM / GB</td></tr><tr><td><a href="https://github.com/pret/pokecrystal">pokecrystal</a></td><td>クリスタル</td><td>ASM / GBC</td></tr><tr><td><a href="https://github.com/pret/pokefirered">pokefirered</a></td><td>ファイアレッド・リーフグリーン</td><td>C中心 / GBA</td></tr><tr><td><a href="https://github.com/pret/pokeemerald">pokeemerald</a></td><td>エメラルド</td><td>C中心 / GBA</td></tr><tr><td><a href="https://github.com/pret/pokeheartgold">pokeheartgold</a></td><td>ハートゴールド・ソウルシルバー</td><td>C等 / DS</td></tr></table><p>GBA・DS用ROMはGB/GBCエミュレーターでは動作しない。</p><h3>クリスタルのビルド概要（Windows + WSL）</h3><pre># PowerShell
+wsl --install -d Ubuntu
+
+# Ubuntu
+sudo apt update
+sudo apt install git make gcc
+git clone https://github.com/pret/pokecrystal
+cd pokecrystal
+# INSTALL.md に従い、指定版RGBDSと依存関係を導入
+make</pre><p><a href="https://github.com/pret/pokecrystal/blob/master/INSTALL.md">ビルド手順（INSTALL.md）</a> / <a href="https://rgbds.gbdev.io/install">RGBDS導入</a>。必要なバージョンと依存関係はリポジトリの指示を優先する。</p><div class="flow"><div class="node">pokecrystal ソース (ASM・データ)</div><div class="arrow">↓ RGBDS + Make</div><div class="node">pokecrystal.gbc</div><div class="arrow">↓</div><div class="node">自作 JavaScript エミュレーター（GBC対応後）</div></div><p>出力はWindowsのEXEではない。Windowsアプリ化はエミュレーターのWeb UIをTauri等で包む別工程になる。</p></section>
+<section id="data"><h2>07 マスターデータへの活用</h2><p>pokecrystalにはポケモン・技・トレーナー・道具・野生出現・マップイベント等のデータとバトル処理が含まれる。代表的な調査先は data/pokemon、data/moves、data/trainers、data/items、data/wild、engine、maps。個別ファイルの現行パスはリポジトリで確認する。</p><table><tr><th>取得元</th><th>用途</th></tr><tr><td><a href="https://pokeapi.co/">PokéAPI</a></td><td>種族値、技、成長率、進化条件等</td></tr><tr><td>pret/pokecrystal</td><td>トレーナークラス、賞金、手持ち、ゲーム固有の処理</td></tr></table><div class="flow"><div class="cols"><div class="node">PokéAPI / JSON</div><div class="node">GitHub / ASM・C</div></div><div class="arrow">↓ Pythonで整形</div><div class="node">master.sqlite3</div><div class="arrow">↓ PythonWebServer API</div><div class="cols"><div class="node">Phaser RPG</div><div class="node">Tauri RPGエディタ</div></div></div><p>このデータ経路は自作RPG向け。エミュレーターはROM内のデータを使うため、基本的にSQLiteは不要。</p></section>
+<section id="refs"><h2>08 参考資料・注意事項</h2><ul><li><a href="https://gbdev.io/pandocs/">Pan Docs</a> — ハードウェア仕様</li><li><a href="https://gbdev.io/gb-opcodes/optables/">GB Opcodes</a> — CPU命令表</li><li><a href="https://github.com/Gekkio/mooneye-test-suite">Mooneye Test Suite</a> — 互換性検証</li><li><a href="https://github.com/robert/gameboy-doctor">Game Boy Doctor</a> — CPUデバッグ</li><li><a href="https://github.com/taisel/GameBoy-Online">GameBoy-Online</a> — JavaScript実装の参考</li><li><a href="https://github.com/binji/binjgb">binjgb</a> — C / WebAssembly実装の参考</li></ul><div class="note">本資料はこれまでの会話と一般的な技術仕様を整理した設計ガイド。リポジトリの最新状態・ビルド・実機互換性は今回検証していない。ROMは同梱しない。公開ソースやゲーム素材の利用・再配布はそれぞれの権利・ライセンスを確認すること。</div></section></main><footer>GameBoy Emulator Development Guide</footer></body></html>
