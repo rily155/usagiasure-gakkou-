@@ -1,0 +1,2 @@
+index.html をブラウザで開くか、フォルダごとWebサーバーへ配置してください。npm不要。
+抽選データはscript.jsのgashaponResultsにあります。5種類は等確率です。

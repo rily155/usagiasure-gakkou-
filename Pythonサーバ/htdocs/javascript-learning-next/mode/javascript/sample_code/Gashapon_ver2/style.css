@@ -1,0 +1,314 @@
+
+.gashaponCard {
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid rgb(226 232 240);
+  background: linear-gradient(180deg, #f8fbff 0%, #eef6ff 100%);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.gashaponHero {
+  border-bottom: 1px solid rgb(226 232 240);
+  background: linear-gradient(135deg, #dbeafe 0%, #fef3c7 100%);
+  padding: 1.5rem;
+}
+
+.gashaponBody {
+  padding: 1.5rem;
+}
+
+.gashaponStage {
+  position: relative;
+  width: 100%;
+  min-height: 320px;
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.55) 45%, rgba(191, 219, 254, 0.45) 100%),
+    linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%);
+  padding: 1.5rem 1rem;
+}
+
+.gashaponToy {
+  position: relative;
+  width: min(100%, 210px);
+  margin: 0 auto;
+}
+
+.gashaponToy svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.gashaponToy .st0 { fill: #cccccc; }
+.gashaponToy .st1 { opacity: 0.18; }
+.gashaponToy .st2 { fill: #4d4d4d; }
+.gashaponToy .st3 { fill: #666666; }
+.gashaponToy .st4 { fill: #e6e6e6; }
+.gashaponToy .st5 { fill: #808080; }
+.gashaponToy .st6 { fill: #f2f2f2; }
+.gashaponToy .st7 { fill: #1a1a1a; }
+.gashaponToy .st8 { fill: #29abe2; }
+.gashaponToy .st9 { fill: #22b573; }
+.gashaponToy .st10 { fill: #cc53ff; }
+.gashaponToy .st11 { fill: #fbb03b; }
+.gashaponToy .st12 { fill: #ed1c24; }
+.gashaponToy .st13 { opacity: 0.5; fill: #ffffff; }
+
+.gashaponToy #c1 {
+  opacity: 0;
+  transform: scale(0.1) rotate(0deg);
+  transform-origin: 115px 526px;
+  transition-delay: 1s;
+  transition-duration: 300ms;
+}
+
+.gashaponToy #c2 {
+  transform: translate(0, 0) rotate(0deg);
+  transform-origin: 210px 360px;
+  transition-duration: 1s;
+}
+
+.gashaponToy #c3 {
+  transform: translate(0, 0) rotate(0deg);
+  transform-origin: 120px 342px;
+  transition-duration: 1s;
+}
+
+.gashaponToy #c4 {
+  transform: translate(0, 0) rotate(0deg);
+  transform-origin: 320px 336px;
+  transition-duration: 1s;
+}
+
+.gashaponToy #c5 {
+  transform: translate(0, 0) rotate(0deg);
+  transform-origin: 233px 236px;
+  transition-duration: 1s;
+}
+
+.gashaponToy #c6 {
+  transform: translate(0, 0) rotate(0deg);
+  transform-origin: 346px 260px;
+  transition-duration: 1s;
+}
+
+.gashaponToy #c7 {
+  transform: translate(0, 0) rotate(0deg);
+  transform-origin: 84px 260px;
+  transition-duration: 1s;
+}
+
+.gashaponToy #c8 {
+  transform: translate(0, 0) rotate(0deg);
+  transform-origin: 157px 184px;
+  transition-duration: 1s;
+}
+
+.gashaponToy #c9 {
+  transform: translate(0, 0) rotate(0deg);
+  transform-origin: 305px 176px;
+  transition-duration: 1s;
+}
+
+.gashaponToy #handle {
+  cursor: pointer;
+  transform: rotate(0deg);
+  transform-origin: 290px 518px;
+  transition-duration: 1s;
+}
+
+.gashaponToy.is-active #c1 {
+  opacity: 1;
+  transform: scale(1) rotate(360deg);
+}
+
+.gashaponToy.is-active #c2 { transform: translate(-18px, -20px) rotate(140deg); }
+.gashaponToy.is-active #c3 { transform: translate(-20px, -60px) rotate(-120deg); }
+.gashaponToy.is-active #c4 { transform: translate(-60px, -10px) rotate(120deg); }
+.gashaponToy.is-active #c5 { transform: translate(-10px, 70px) rotate(130deg); }
+.gashaponToy.is-active #c6 { transform: translate(0px, 26px) rotate(-90deg); }
+.gashaponToy.is-active #c7 { transform: translate(120px, -40px) rotate(90deg); }
+.gashaponToy.is-active #c8 { transform: translate(-50px, -24px) rotate(150deg); }
+.gashaponToy.is-active #c9 { transform: translate(8px, 30px) rotate(110deg); }
+.gashaponToy.is-active #handle { transform: rotate(360deg); }
+
+@media (min-width: 768px) {
+  .gashaponHero,
+  .gashaponBody {
+    padding: 2rem;
+  }
+
+  .gashaponStage {
+    padding: 2rem;
+  }
+}
+
+
+.capsulePreview {
+  position: relative;
+  cursor: pointer;
+}
+
+.capsulePreview__stage {
+  position: relative;
+  width: 100%;
+  height: 160px;
+}
+
+.capsulePreview__glow {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 76px;
+  height: 76px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 72%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.capsulePreview__shells {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  padding-top: 32px;
+}
+
+.capsulePreview__top,
+.capsulePreview__bottom {
+  position: relative;
+}
+
+.capsulePreview__top {
+  z-index: 4;
+  transform: translateX(3px);
+}
+
+.capsulePreview__bottom {
+  z-index: 3;
+  transform: translateX(-3px);
+}
+
+.capsulePreview__half {
+  position: relative;
+  width: 58px;
+  height: 112px;
+}
+
+.capsulePreview__half--top {
+  border: 4px solid #e5e7eb;
+  border-right: 0;
+  border-radius: 999px 0 0 999px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.capsulePreview__half--bottom {
+  position: relative;
+  border-radius: 0 999px 999px 0;
+  background:
+    linear-gradient(180deg, var(--capsule-shell-light) 0%, var(--capsule-shell) 22%, var(--capsule-shell) 100%);
+  box-shadow:
+    inset -5px 0 8px rgba(255, 255, 255, 0.18),
+    inset 2px 0 6px rgba(0, 0, 0, 0.08);
+}
+
+.capsulePreview__half--bottom::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 10px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  box-shadow: 1px 0 2px rgba(0, 0, 0, 0.04);
+}
+
+.capsulePreview__content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+/* スマホ */
+@media (max-width: 640px) {
+  .capsulePreview__stage {
+    height: 150px;
+  }
+
+  .capsulePreview__shells {
+    gap: 5px;
+    padding-top: 30px;
+  }
+
+  .capsulePreview__top {
+    transform: translateX(3px);
+  }
+
+  .capsulePreview__bottom {
+    transform: translateX(-3px);
+  }
+
+  .capsulePreview__half {
+    width: 54px;
+    height: 104px;
+  }
+}
+  
+/* タブレット */
+@media (min-width: 641px) and (max-width: 1023px) {
+  .capsulePreview__shells {
+    gap: 6px;
+  }
+
+  .capsulePreview__top {
+    transform: translateX(3px);
+  }
+
+  .capsulePreview__bottom {
+    transform: translateX(-3px);
+  }
+}
+
+/* PC */
+@media (min-width: 1024px) {
+  .capsulePreview__shells {
+    gap: 8px;
+  }
+
+  .capsulePreview__top {
+    transform: translateX(5px);
+  }
+
+  .capsulePreview__bottom {
+    transform: translateX(-5px);
+  }
+}
+
+/* 大きめPC */
+@media (min-width: 1280px) {
+  .capsulePreview__shells {
+    gap: 8px;
+  }
+
+  .capsulePreview__top {
+    transform: translateX(4px);
+  }
+
+  .capsulePreview__bottom {
+    transform: translateX(-4px);
+  }
+}
+
+*{box-sizing:border-box}body{margin:0;background:#f8fafc;color:#0f172a;font-family:system-ui,sans-serif}main{max-width:1024px;margin:auto;padding:24px}h1{font-size:30px;margin:8px 0}p{line-height:1.75}.panel{background:white;border:1px solid #cbd5e1;border-radius:16px;padding:20px;margin-bottom:24px}.machine{margin-bottom:0}button{border:0;border-radius:999px;background:#0284c7;color:white;padding:12px 20px;font-weight:600;cursor:pointer}button:hover{background:#0369a1}button:disabled{background:#9ca3af;cursor:not-allowed}.gashaponStage{margin-top:16px}#holder{cursor:pointer}#c1{pointer-events:none}.is-active #c1.ready{pointer-events:auto;cursor:pointer}#front{pointer-events:none}dialog{border:0;padding:0;border-radius:16px;width:min(768px,calc(100% - 16px));max-height:92dvh;overflow:auto;background:white url('assets/background-light1.gif') center/cover no-repeat}dialog::backdrop{background:#0008}.result-inner{background:#ffffffb3;backdrop-filter:blur(4px);padding:24px;text-align:center}.capsulePreview{width:min(280px,100%);margin:auto}.prize{width:64px;height:64px;border:1px solid;border-radius:50%;display:grid;place-items:center}.prize img{width:48px;height:48px;object-fit:contain}.rotator{transform-origin:bottom center;display:inline-block}.opened .capsulePreview__top .rotator{transform:rotate(-45deg)}.opened .capsulePreview__bottom .rotator{transform:rotate(45deg)}.rotator{transition:transform .3s}.name{color:#0369a1;font-weight:600;opacity:0;transition:opacity .15s;min-height:28px;margin:0}.opened .name{opacity:1}.shine{position:relative;width:fit-content;max-width:100%;margin:auto}.stars{position:absolute;inset:0;pointer-events:none;z-index:5}.star{position:absolute;opacity:0;animation-name:twinkle;animation-iteration-count:infinite;color:#fdd835;text-shadow:0 0 5px white}.star.s{font-size:10px}.star.m{font-size:18px}.star.l{font-size:25px}@keyframes twinkle{0%,10%,55%,95%{opacity:0}5%,60%,100%{opacity:1}}#close{width:min(320px,100%);margin-top:16px}@media(max-width:640px){main{padding:10px}.gashaponBody{padding:12px}h1{font-size:24px}.capsulePreview{width:160px}}

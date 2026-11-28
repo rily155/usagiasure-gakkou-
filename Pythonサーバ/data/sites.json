@@ -1,0 +1,9 @@
+[
+  {
+    "name": "JavaScript Learning",
+    "prefix": "/javascript-learning-next/",
+    "root": "htdocs/javascript-learning-next",
+    "mode": "nextjs",
+    "enabled": true
+  }
+]

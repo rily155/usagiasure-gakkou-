@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phaser 3 音声操作RPG</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #131c2b;
+  color: #f3f6ff;
+  font-family: "Meiryo", sans-serif;
+}
+.layout {
+  max-width: 1100px;
+  margin: auto;
+  padding: 16px;
+}
+h1 { font-size: 22px; margin: 0 0 12px; }
+h2 { font-size: 16px; margin: 0 0 12px; }
+#game {
+  width: 100%;
+  background: #101827;
+  border: 2px solid #52647c;
+  border-radius: 8px;
+  overflow: hidden;
+}
+#game canvas {
+  display: block;
+  margin: auto;
+  image-rendering: pixelated;
+}
+.panel {
+  margin-top: 12px;
+  padding: 16px;
+  background: #25344b;
+  border-radius: 8px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+button, select {
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+button {
+  background: #347fda;
+  border: 0;
+  color: white;
+  cursor: pointer;
+}
+button:disabled { opacity: .45; cursor: default; }
+select {
+  width: 100%;
+  background: #101827;
+  color: white;
+  border: 1px solid #64748b;
+}
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+.meter {
+  height: 18px;
+  background: #101827;
+  border-radius: 5px;
+  overflow: hidden;
+}
+#micLevel {
+  width: 0%;
+  height: 100%;
+  background: #22d38a;
+}
+#recognized {
+  min-height: 55px;
+  padding: 12px;
+  background: #101827;
+  border-radius: 6px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+#status { color: #8ee4ae; }
+#lastCommand { color: #ffdc80; }
+.small {
+  font-size: 13px;
+  color: #b7c8df;
+  line-height: 1.8;
+}
+@media(max-width: 700px) {
+  .grid { grid-template-columns: 1fr; }
+  .layout { padding: 8px; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <h1>🎮 Phaser 3 音声操作RPG</h1>
+
+  <div id="game"></div>
+
+  <div class="grid">
+    <section class="panel">
+      <h2>🎤 マイク設定</h2>
+      <select id="micSelect">
+        <option value="">マイク未取得</option>
+      </select>
+      <div class="buttons">
+        <button id="micRefresh">マイク一覧更新</button>
+        <button id="micTest">入力テスト</button>
+        <button id="micTestStop" disabled>テスト停止</button>
+      </div>
+      <p>マイク入力レベル</p>
+      <div class="meter"><div id="micLevel"></div></div>
+      <p id="micDeviceStatus" class="small">未接続</p>
+      <div class="buttons">
+        <button id="micStart">音声認識開始</button>
+        <button id="micStop" disabled>音声認識停止</button>
+      </div>
+      <p id="status">音声認識：停止中</p>
+      <p class="small">
+        Web Speech APIは選択したマイクを直接指定できません。
+        選択は入力テスト用です。音声認識にはブラウザの
+        既定入力デバイスが使用されます。
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>📝 音声認識結果</h2>
+      <div id="recognized">認識結果がここに表示されます</div>
+      <p>最後のコマンド：<span id="lastCommand">なし</span></p>
+      <h2>操作方法</h2>
+      <div class="small">
+        矢印キー / WASD：移動<br>
+        Space：会話・調査<br>
+        Enter / Esc：会話を閉じる<br>
+        音声：「上」「下」「左」「右」<br>
+        音声：「右に3歩」「上に2歩」<br>
+        音声：「話す」「調べる」「閉じる」
+      </div>
+      <h2 style="margin-top:16px">マップ</h2>
+      <select id="mapSelect">
+        <option value="">マップ読み込み中</option>
+      </select>
+      <p id="mapStatus" class="small"></p>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
+<script src="./game.js"></script>
+</body>
+</html>

@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ポケモン選択</title>
+    <style>
+        :root {
+            font-family: 'Courier New', monospace;
+            color: #17303c
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-y: auto;
+            display: grid;
+            place-items: center;
+            background: #1c2937;
+            padding: 18px
+        }
+
+        .wrap {
+            width: min(900px, 100%)
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 19px;
+            letter-spacing: .1em;
+            margin: 0 0 12px
+        }
+
+        .screen {
+            position: relative;
+            background: #238b73;
+            border: 7px solid #263b48;
+            box-shadow: 0 12px 0 #111d29, 0 22px 50px #0008;
+            padding: 18px;
+            image-rendering: pixelated
+        }
+
+        .screen:before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, #fff1 0 2px, transparent 2px 5px);
+            pointer-events: none
+        }
+
+        .party {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1.12fr) minmax(0, 2fr);
+            grid-template-rows: repeat(5, minmax(0, 1fr));
+            column-gap: 12px;
+            row-gap: 7px;
+            height: 440px;
+            align-items: stretch
+        }
+
+        .slot {
+            border: 0;
+            padding: 0;
+            background: transparent;
+            position: relative;
+            cursor: pointer;
+            text-align: left;
+            image-rendering: pixelated;
+            min-width: 0;
+            min-height: 0
+        }
+
+        .slot:hover {
+            filter: brightness(1.08)
+        }
+
+        .slot:focus-visible {
+            outline: 3px solid #fff38c;
+            outline-offset: 2px
+        }
+
+        .slot:first-child {
+            grid-column: 1;
+            grid-row: 1 / 6;
+            height: 290px;
+            align-self: start
+        }
+
+        .slot:not(:first-child) {
+            grid-column: 2
+        }
+
+        .slot .frame {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            image-rendering: pixelated
+        }
+
+        .slot .contents {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 5px 5% 5px 18%;
+            font-size: clamp(12px, 1.6vw, 17px);
+            font-weight: 900;
+            color: white;
+            text-shadow: 1px 2px #345164;
+            gap: 3px
+        }
+
+        .slot:first-child .contents {
+            padding: 6% 8% 7% 24%;
+            font-size: clamp(13px, 1.9vw, 20px);
+            justify-content: flex-end;
+            gap: 5px
+        }
+
+        .slot .pokemon-sprite {
+            position: absolute;
+            left: 2%;
+            top: 50%;
+            width: 15%;
+            height: 65%;
+            object-fit: contain;
+            transform: translateY(-50%);
+            image-rendering: pixelated;
+            pointer-events: none;
+        }
+        .slot:first-child .pokemon-sprite {
+            left: 15%;
+            top: 43%;
+            width: 65%;
+            height: 46%;
+        }
+        /* 2〜6番目：画像を左、ステータスを右に配置し、全体を右寄せ */
+        .slot:not(:first-child) .contents {
+            left: auto;
+            right: 9%;
+            width: 43%;
+            padding: 5px 1% 5px 1%;
+            font-size: clamp(11px, 1.35vw, 15px);
+        }
+        .slot:not(:first-child) .pokemon-sprite {
+            left: auto;
+            right: 65%;
+            width: 23%;
+            height: 80%;
+        }
+        .slot .top {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+            align-items: center
+        }
+
+        .slot .hp {
+            font-size: .8em;
+            display: flex;
+            gap: 6px;
+            align-items: center
+        }
+
+        .bar {
+            height: 8px;
+            border: 2px solid #eef8ef;
+            background: #344c54;
+            flex: 1;
+            min-width: 15px
+        }
+
+        .fill {
+            display: block;
+            height: 100%;
+            background: #61dc7c
+        }
+
+        .slot.empty .contents {
+            color: #eaf9fc
+        }
+
+        .slot.empty .frame {
+            opacity: .7
+        }
+
+        .footer {
+            position: relative;
+            margin-top: 13px;
+            display: flex;
+            gap: 10px
+        }
+
+        .message {
+            flex: 1;
+            background: #f4f4ee;
+            border: 4px solid #2b5965;
+            box-shadow: inset 0 0 0 3px #fff;
+            padding: 14px;
+            min-height: 78px;
+            font-weight: bold;
+            line-height: 1.6
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            align-items: stretch
+        }
+
+        .actions button,
+        .modal button {
+            border: 3px solid #264e65;
+            background: #fff;
+            color: #183d4d;
+            font-weight: 900;
+            font-size: 15px;
+            padding: 10px 16px;
+            cursor: pointer;
+            box-shadow: 3px 3px #142b39
+        }
+
+        .actions button:focus-visible,
+        .modal button:focus-visible {
+            outline: 3px solid yellow
+        }
+
+        .actions button.primary,
+        .modal button.primary {
+            background: #f4cf5e
+        }
+
+        .hint {
+            color: #d9e8eb;
+            font-size: 12px;
+            margin-top: 18px
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: #000a;
+            display: grid;
+            place-items: center;
+            padding: 18px;
+            z-index: 10
+        }
+
+        .overlay[hidden] {
+            display: none
+        }
+
+        .modal {
+            width: min(430px, 100%);
+            background: #f6f4e9;
+            border: 7px double #2e5364;
+            box-shadow: 8px 8px #0c1720;
+            padding: 22px;
+            text-align: center
+        }
+
+        .modal h2 {
+            margin: 0 0 14px
+        }
+
+        .modal p {
+            line-height: 1.8
+        }
+
+        .modal .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 20px
+        }
+
+        .action-menu { flex-direction: column; }\n        .action-menu[hidden] { display:none; }
+        #statsPanel { text-align: left; line-height: 1.9; }
+        #statsPanel[hidden] { display: none; }
+        .stat-line { display:flex; justify-content:space-between; border-bottom:1px solid #c8c9c1; gap:12px; }
+        .stat-head { display:flex; align-items:center; gap:15px; margin-bottom:12px; }
+        .stat-head img { width:90px; height:90px; object-fit:contain; image-rendering:pixelated; }
+        .stat-back { margin-top:15px; width:100%; }
+
+        .modal:has(#statsPanel:not([hidden])){width:min(820px,96vw);max-width:none;max-height:94vh;overflow:auto;background:#233e50;padding:12px}
+        .modal:has(#statsPanel:not([hidden])) #modalTitle,.modal:has(#statsPanel:not([hidden])) #modalBody{display:none}
+        .detail-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px}
+        .detail-tabs button{font-size:12px;padding:8px 2px}
+        .detail-tabs button.active{background:#f5d96d;color:#263c48}
+        .detail-header{background:#32788f;color:white;font-weight:bold;padding:7px 10px;margin-bottom:8px;display:flex;justify-content:space-between}
+        .detail-canvas{position:relative;width:100%;aspect-ratio:240/143;background-size:100% 100%;image-rendering:pixelated;font-family:monospace;font-weight:bold;color:#34495c;font-size:clamp(11px,2.1vw,19px)}
+        .detail-canvas.profile{background-image:url('/storage/games/pokemon/pokemon_menu/assets/menue1.png')}
+        .detail-canvas.stats{background-image:url('/storage/games/pokemon/pokemon_menu/assets/menue2.png')}
+        .detail-field{position:absolute;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
+        .detail-sprite{position:absolute;left:9%;top:13%;width:34%;height:37%;object-fit:contain;image-rendering:pixelated}
+        .profile .number{left:74%;top:3%}.profile .name{left:69%;top:13%;width:29%}.profile .type{left:72%;top:23%}.profile .ot{left:72%;top:33%}.profile .idno{left:72%;top:43%}.profile .item{left:72%;top:53%}.profile .memo{left:4%;top:69%;width:92%;white-space:normal;font-size:.8em}
+        .stats .hp{left:85%;top:3%}.stats .attack{left:85%;top:12%}.stats .defense{left:85%;top:21%}.stats .spa{left:85%;top:30%}.stats .spd{left:85%;top:39%}.stats .speed{left:85%;top:48%}.stats .exp{left:42%;top:61%}.stats .next{left:56%;top:70%}.stats .ability{left:29%;top:81%;width:62%}
+        .detail-moves,.detail-move-info{background:#e2f2e9;border:5px solid #4b8892;padding:12px;min-height:280px;color:#263f50;display:grid;gap:9px;align-content:start}
+        .detail-move-button{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fffdf0;border:3px solid #72949c;padding:12px;font-weight:bold;text-align:left;cursor:pointer}
+        .detail-move-button.active{background:#ffeb9d;border-color:#d89c37}
+        .detail-move-button small{display:block;color:#537383;font-size:11px;margin-top:4px}
+        .detail-move-info h3{margin:0}.detail-move-info dl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}.detail-move-info dl div{background:white;padding:8px}.detail-move-info dt{font-size:11px}.detail-move-info dd{margin:2px 0;font-weight:bold}.detail-move-info p{background:white;padding:12px;line-height:1.7}
+        .detail-back{margin-top:10px;width:100%}
+        @media(max-width:500px){.detail-tabs button{font-size:10px}.detail-canvas{font-size:clamp(9px,2.8vw,14px)}}
+        @media(max-width:640px) {
+            .party {
+                grid-template-columns: 1fr;
+                grid-template-rows: none;
+                height: auto;
+                min-height: unset
+            }
+
+            .slot,
+            .slot:first-child {
+                min-height: 92px;
+                height: 92px;
+                grid-column: 1;
+                grid-row: auto
+            }
+
+            .slot:first-child {
+                height: 130px;
+            }
+            .slot:first-child .pokemon-sprite {
+                left: 9%; top: 57%; width: 32%; height: 72%;
+            }
+            .slot:first-child .contents {
+                left: 42%; right: 4%;
+                padding: 8px 4%;
+                font-size: 15px;
+                justify-content: center;
+            }
+            .slot:not(:first-child) .pokemon-sprite {
+                left: auto; right: 54%; width: 25%; height: 75%;
+            }
+            .slot:not(:first-child) .contents {
+                left: auto; right: 9%; width: 43%;
+                padding: 5px 1%;
+                font-size: 13px;
+            }
+
+            .footer {
+                flex-direction: column
+            }
+
+            .actions button {
+                flex: 1
+            }
+
+            .screen {
+                padding: 10px
+            }
+
+            .empty {
+                min-height: 55px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="wrap">
+        <h1>ポケモンを えらんでください</h1>
+        <section class="screen" aria-label="ポケモン一覧">
+            <div id="party" class="party"></div>
+            <div class="footer">
+                <div class="message" id="message" aria-live="polite">ポケモンを えらんでください。</div>
+                <div class="actions"><button id="cancel">もどる</button><button class="primary" id="confirm">けってい</button>
+                </div>
+            </div>
+        </section>
+        <p class="hint">↑ ↓ ← →：いどう ／ Enter：けってい ／ Esc：もどる　・　ポケモンをクリックしても選べます</p>
+    </main>
+    <div id="overlay" class="overlay" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <h2 id="modalTitle">ポケモンの そうさ</h2>
+            <p id="modalBody"></p>
+            <div class="buttons action-menu" id="actionMenu">
+                <button class="primary" id="viewStats">つよさをみる</button>
+                <button id="rename">なまえをかえる</button>
+                <button id="reorder">ならびかえ</button>
+                <button id="no">やめる</button>
+            </div>
+            <form id="renamePanel" hidden>
+                <label for="nicknameInput">ニックネーム（12文字まで）</label>
+                <input id="nicknameInput" type="text" autocomplete="off" style="display:block;width:100%;box-sizing:border-box;font:inherit;padding:8px;margin:10px 0">
+                <p id="renameError" role="status"></p>
+                <div class="buttons"><button type="submit" class="primary">けってい</button><button type="button" id="resetName">元の名前</button><button type="button" id="cancelName">もどる</button></div>
+            </form>
+            <div id="statsPanel" hidden></div>
+        </div>
+    </div>
+    <script>
+        (() => {
+            'use strict';
+            const battleMode = new URLSearchParams(location.search).get('mode') === 'battle';
+            if (battleMode) { document.querySelector('h1').textContent = 'いれかえる ポケモンを えらんでください'; }
+            const initialPokemon = [{ id: 25, name: 'ピカチュウ', level: 5, hp: 20, maxHp: 20 }, { id: 133, name: 'イーブイ', level: 5, hp: 22, maxHp: 22 }, { id: 155, name: 'ヒノアラシ', level: 5, hp: 21, maxHp: 21 }];
+            const assets = { first: { selected: '/storage/games/pokemon/pokemon_menu/assets/first-selected.png', normal: '/storage/games/pokemon/pokemon_menu/assets/first-normal.png' }, row: { selected: '/storage/games/pokemon/pokemon_menu/assets/row-selected.png', normal: '/storage/games/pokemon/pokemon_menu/assets/row-normal.png' } };
+            function spritePath(id) {
+                const number = Number(id);
+                if (!Number.isInteger(number) || number < 1 || number > 718) { return null; }
+                return `/storage/games/pokemon/pokemon_menu/sprites/${String(number).padStart(3, '0')}.png`;
+            }
+            const party = document.getElementById('party'), message = document.getElementById('message'), overlay = document.getElementById('overlay');
+            let pokemon = initialPokemon.map(p => ({ ...p })), selected = 0;
+            function displayName(p) { return p.nickname || p.name; }
+            function safe(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+            function render() { party.innerHTML = ''; for (let i = 0; i < 6; i++) { const p = pokemon[i]; const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'slot' + (selected === i ? ' selected' : ''); btn.setAttribute('aria-label', p ? `${displayName(p)} レベル${p.level} HP${p.hp}/${p.maxHp}` : 'あき'); btn.setAttribute('aria-pressed', String(selected === i)); if (p) { const rate = Math.max(0, Math.min(100, p.maxHp ? 100 * p.hp / p.maxHp : 0)); btn.innerHTML = `<img class="frame" alt="" src="${selected === i ? (i === 0 ? assets.first.selected : assets.row.selected) : (i === 0 ? assets.first.normal : assets.row.normal)}"><img class="pokemon-sprite" src="${spritePath(p.pokemonId ?? p.id) || ''}" alt="" ${spritePath(p.pokemonId ?? p.id) ? '' : 'hidden'} onerror="this.hidden=true"><div class="contents"><div class="top"><span>${safe(displayName(p))}</span><span>Lv${Number(p.level) || 1}</span></div><div class="hp"><span>HP</span><div class="bar"><span class="fill" style="width:${rate}%;background:${rate <= 20 ? '#e65b50' : rate <= 50 ? '#e9c654' : '#61dc7c'}"></span></div></div><div class="hp">${Number(p.hp) || 0} / ${Number(p.maxHp) || 0}</div></div>`; } else { btn.classList.add('empty'); btn.innerHTML = `<img class="frame" alt="" src="${selected === i ? (i === 0 ? assets.first.selected : assets.row.selected) : (i === 0 ? assets.first.normal : assets.row.normal)}"><div class="contents">— あき —</div>`; } btn.addEventListener('click', () => choose(i)); party.appendChild(btn); } const p = pokemon[selected]; message.textContent = p ? `${displayName(p)}を えらんでいます。` : 'ここには ポケモンが いません。'; }
+            function choose(i) { selected = Math.max(0, Math.min(5, i)); render(); }
+            let swapFrom = null;
+            let statsOpen = false;
+            let detailPage = 0;
+            let detailMove = 0;
+            const actionMenu = document.getElementById('actionMenu');
+            const statsPanel = document.getElementById('statsPanel');
+            function confirm() {
+                const p = pokemon[selected];
+                if (battleMode) {
+                    if (!p || Number(p.hp) <= 0) { message.textContent = 'その ポケモンは だせない！'; return; }
+                    if (p.battleActive) { message.textContent = 'すでに たたかっています。'; return; }
+                    notify('pokemon-party-select', { index: selected });
+                    return;
+                }
+                if (swapFrom !== null) {
+                    if (!p) {
+                        message.textContent = 'いれかえる ポケモンを えらんでください。';
+                        return;
+                    }
+                    const old = pokemon[swapFrom];
+                    pokemon[swapFrom] = pokemon[selected];
+                    pokemon[selected] = old;
+                    swapFrom = null;
+                    render();
+                    message.textContent = 'ポケモンを いれかえました。';
+                    notify('pokemon-party-reordered', { party: pokemon.map(x => x ? {...x} : x) });
+                    return;
+                }
+                if (!p) { message.textContent = 'ポケモンを えらんでください。'; return; }
+                document.getElementById('modalTitle').textContent = `${displayName(p)}を どうする？`;
+                document.getElementById('modalBody').textContent = `Lv${p.level}  HP ${p.hp}/${p.maxHp}`;
+                actionMenu.hidden = false;
+                statsPanel.hidden = true;
+                statsOpen = false;
+                overlay.hidden = false;
+                document.getElementById('viewStats').focus();
+            }
+            const renamePanel = document.getElementById('renamePanel');
+            const nicknameInput = document.getElementById('nicknameInput');
+            let renameTarget = null;
+            function closeRename() {
+                renamePanel.hidden = true;
+                renameTarget = null;
+                actionMenu.hidden = false;
+                document.getElementById('rename').focus();
+            }
+            document.getElementById('rename').addEventListener('click', () => {
+                const p = pokemon[selected];
+                if (!p) return;
+                renameTarget = p;
+                nicknameInput.value = p.nickname || '';
+                nicknameInput.placeholder = p.name;
+                document.getElementById('renameError').textContent = '空欄にすると元の名前に戻ります。';
+                actionMenu.hidden = true;
+                renamePanel.hidden = false;
+                nicknameInput.focus();
+                nicknameInput.select();
+            });
+            document.getElementById('cancelName').addEventListener('click', closeRename);
+            document.getElementById('resetName').addEventListener('click', () => { nicknameInput.value = ''; nicknameInput.focus(); });
+            renamePanel.addEventListener('submit', e => {
+                e.preventDefault();
+                if (!renameTarget) return;
+                const nickname = nicknameInput.value.trim();
+                if (Array.from(nickname).length > 12 || /[\u0000-\u001f\u007f]/.test(nickname)) {
+                    document.getElementById('renameError').textContent = '12文字以内の名前を入力してください。'; return;
+                }
+                if (window.parent === window) {
+                    renameTarget.nickname = nickname;
+                    closeRename(); overlay.hidden = true; render(); return;
+                }
+                notify('pokemon-party-rename', { instanceId: renameTarget.instanceId, nickname });
+            });
+            function close() {
+                if (battleMode) { notify('pokemon-party-close', {}); return; }
+                if (!renamePanel.hidden) { closeRename(); return; }
+                if (statsOpen) {
+                    statsOpen = false;
+                    statsPanel.hidden = true;
+                    actionMenu.hidden = false;
+                    document.getElementById('viewStats').focus();
+                    return;
+                }
+                overlay.hidden = true;
+                party.children[selected]?.focus();
+            }
+            function notify(type, detail) {
+                window.dispatchEvent(new CustomEvent(type, { detail }));
+                try {
+                    if (window.parent !== window) {
+                        window.parent.postMessage({ type, ...detail }, window.location.origin);
+                    }
+                } catch (e) { console.warn(e); }
+            }
+            function showStats() {
+                statsOpen = true;
+                detailPage = 0;
+                detailMove = 0;
+                actionMenu.hidden = true;
+                statsPanel.hidden = false;
+                renderDetail();
+            }
+            function renderDetail() {
+                const p = pokemon[selected];
+                if (!p) return;
+                const stats = p.stats || {};
+                const moves = Array.isArray(p.moves) ? p.moves : [];
+                const escape = value => safe(String(value ?? '—'));
+                const f = (key, value) => `<span class="detail-field ${key}">${escape(value)}</span>`;
+                const sprite = spritePath(p.pokemonId ?? p.id);
+                const img = sprite ? `<img class="detail-sprite" src="${sprite}" alt="">` : '';
+                let content = '';
+                if (detailPage === 0) {
+                    const types = Array.isArray(p.types) ? p.types.join(' / ') : p.type;
+                    content = `<div class="detail-canvas profile">${img}` +
+                        f('number',p.pokemonId ?? p.id) + f('name',p.name) + f('type',types) +
+                        f('ot',p.trainerName ?? p.originalTrainer) + f('idno',p.trainerId ?? p.otId) +
+                        f('item',p.heldItem?.name ?? p.heldItem ?? 'なし') + f('memo',p.memo ?? '出会った情報はありません。') + '</div>';
+                } else if (detailPage === 1) {
+                    content = `<div class="detail-canvas stats">${img}` +
+                        f('hp',p.maxHp ?? stats.hp) + f('attack',stats.attack ?? p.attack) +
+                        f('defense',stats.defense ?? p.defense) + f('spa',stats.specialAttack ?? p.specialAttack) +
+                        f('spd',stats.specialDefense ?? p.specialDefense) + f('speed',stats.speed ?? p.speed) +
+                        f('exp',p.experience) + f('next',p.nextLevelExperience ?? p.nextExp) +
+                        f('ability',p.ability?.name ?? p.abilityName ?? p.ability) + '</div>';
+                } else if (detailPage === 2) {
+                    content = '<div class="detail-moves">' + Array.from({length:4},(_,i) => {
+                        const m = moves[i];
+                        if (!m) return `<div class="detail-move-button">${i+1}. ―――</div>`;
+                        return `<button type="button" class="detail-move-button ${detailMove === i ? 'active' : ''}" data-move="${i}"><span>${i+1}. ${escape(m.name ?? 'わざ')}<small>${escape(m.type ?? 'タイプ不明')}</small></span><span>PP ${escape(m.pp ?? 0)}/${escape(m.maxPp ?? m.pp ?? 0)}</span></button>`;
+                    }).join('') + '</div>';
+                } else {
+                    const m = moves[detailMove] ?? moves[0];
+                    content = m ? `<div class="detail-move-info"><h3>${escape(m.name)}</h3><dl>` +
+                        [['タイプ',m.type],['分類',m.category],['威力',m.power ?? '—'],['命中',m.accuracy == null ? '—' : m.accuracy+'%'],['PP',`${m.pp ?? 0} / ${m.maxPp ?? m.pp ?? 0}`]].map(([label,value]) => `<div><dt>${label}</dt><dd>${escape(value)}</dd></div>`).join('') +
+                        `</dl><p>${escape(m.description ?? m.desc ?? 'わざの説明は未設定です。')}</p></div>` : '<div class="detail-move-info">わざがありません。</div>';
+                }
+                const tabs = ['メモ','のうりょく','わざ','わざ詳細'];
+                statsPanel.innerHTML = `<div class="detail-tabs">${tabs.map((t,i) => `<button type="button" data-page="${i}" class="${detailPage === i ? 'active' : ''}">${i+1} ${t}</button>`).join('')}</div><div class="detail-header"><span>${escape(displayName(p))}</span><span>Lv.${escape(p.level)}</span><span>${detailPage+1} / 4</span></div>${content}<button type="button" class="detail-back" id="detailBack">もどる</button>`;
+                statsPanel.querySelectorAll('[data-page]').forEach(btn => btn.addEventListener('click', () => { detailPage = Number(btn.dataset.page); renderDetail(); }));
+                statsPanel.querySelectorAll('[data-move]').forEach(btn => btn.addEventListener('click', () => { detailMove = Number(btn.dataset.move); detailPage = 3; renderDetail(); }));
+                document.getElementById('detailBack').addEventListener('click', close);
+            }
+            document.getElementById('viewStats').addEventListener('click', showStats);
+            document.getElementById('reorder').addEventListener('click', () => {
+                swapFrom = selected;
+                overlay.hidden = true;
+                message.textContent = 'いれかえる あいてを えらんでください。';
+                party.children[selected]?.focus();
+            });
+            document.getElementById('confirm').addEventListener('click', confirm);
+            document.getElementById('cancel').addEventListener('click', () => {
+                if (battleMode) { notify('pokemon-party-close', {}); return; }
+                if (swapFrom !== null) { swapFrom = null; render(); return; }
+                notify('pokemon-party-close', {});
+                message.textContent = 'もどります。';
+            });
+            document.getElementById('no').addEventListener('click', close);
+            overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+            document.addEventListener('keydown', e => {
+                if (!overlay.hidden) {
+                    if (!renamePanel.hidden) { if (e.key === 'Escape' && !e.isComposing) { e.preventDefault(); closeRename(); } return; }
+                    if (e.key === 'Escape' || e.key === 'Backspace') { e.preventDefault(); close(); }
+                    else if (statsOpen && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) { e.preventDefault(); detailPage = Math.max(0, Math.min(3, detailPage + (e.key === 'ArrowRight' ? 1 : -1))); renderDetail(); }
+                    else if (statsOpen && (e.key === 'ArrowUp' || e.key === 'ArrowDown') && detailPage >= 2) { e.preventDefault(); const count = (pokemon[selected]?.moves || []).length; if (count) { detailMove = (detailMove + (e.key === 'ArrowDown' ? 1 : -1) + count) % count; renderDetail(); } }
+                    return;
+                }
+                const moves = { ArrowUp: -1, ArrowDown: 1, ArrowLeft: -1, ArrowRight: 1 };
+                if (Object.prototype.hasOwnProperty.call(moves, e.key)) {
+                    e.preventDefault();
+                    choose((selected + moves[e.key] + 6) % 6);
+                    party.children[selected]?.focus();
+                } else if (e.key === 'Enter' && document.activeElement !== document.getElementById('cancel')) {
+                    e.preventDefault(); confirm();
+                } else if (e.key === 'Escape') {
+                    e.preventDefault(); document.getElementById('cancel').click();
+                }
+            });
+            window.addEventListener('message', event => {
+                if (event.origin !== window.location.origin || event.source !== window.parent) return;
+                if (event.data?.type === 'pokemon-party-renamed') {
+                    const index = pokemon.findIndex(p => p?.instanceId === event.data.instanceId);
+                    if (index >= 0) { pokemon[index].nickname = event.data.nickname; selected = index; closeRename(); overlay.hidden = true; render(); message.textContent = `${displayName(pokemon[index])} に なりました。`; party.children[index]?.focus(); }
+                }
+                if (event.data?.type === 'pokemon-party-data') window.setPokemonParty(event.data.party || []);
+            });
+            window.setPokemonParty = function (items) { if (!Array.isArray(items)) { throw new TypeError('配列を指定してください'); } pokemon = items.slice(0, 6).map(p => ({ ...p })); selected = 0; render(); };
+            render();
+            notify('pokemon-party-ready', {});
+        })();
+    </script>
+</body>
+
+</html>

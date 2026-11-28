@@ -1,0 +1,4 @@
+DirectoryIndex index.html
+Options -Indexes -MultiViews
+# Next.js static export: each route has its own index.html.
+# No SPA fallback to the root index.html.

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>OnSelect</title>
+  </head>
+  <body>
+    <input value="文字を選択" onselect="out.textContent=this.value.substring(this.selectionStart,this.selectionEnd)">
+    <p id="out">
+    </p>
+  </body>
+</html>

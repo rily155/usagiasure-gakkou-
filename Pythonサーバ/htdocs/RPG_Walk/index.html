@@ -1,0 +1,8 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>JavaScript RPG | 歩行と会話</title><link rel="stylesheet" href="core/style.css"></head><body>
+<header><h1>JavaScript RPG — 歩行と会話</h1><p>VS Codeで <code>learner/walk.js</code> と <code>learner/talk.js</code> を編集 → ブラウザを再読み込み</p></header>
+<main><section class="panel"><h2>ゲームプレビュー</h2><div class="stage"><canvas id="game" width="512" height="384"></canvas><div id="dialog" class="dialog"></div></div><p>矢印キー / WASD：歩く　Space / Enter：話す・次へ　Esc：会話を閉じる</p><div class="keys"><button data-dir="up">↑</button><div><button data-dir="left">←</button><button id="talkButton">話す</button><button data-dir="right">→</button></div><button data-dir="down">↓</button></div><button id="restart">位置を初期化</button><h3>実行結果</h3><pre id="output">準備中</pre><h3>ゲームの状態</h3><pre id="state"></pre></section><aside class="panel"><h2>VS Codeで編集するファイル</h2><p><strong>① 歩行：</strong><code>learner/walk.js</code></p><pre>window.learnerWalk = function(direction, game) {
+  game.walk(direction);
+};</pre><p><strong>② 会話：</strong><code>learner/talk.js</code></p><pre>window.learnerTalk = async function(game) {
+  await game.say("こんにちは！");
+};</pre><p>ファイルを保存したら <strong>Ctrl + F5</strong> で再読み込みしてください。</p><p>マップ・当たり判定・描画・キー入力は <code>core/</code> に分離しています。学習者は変更する必要がありません。</p><p>セーブ機能はありません。再読み込みでゲーム状態も初期化されます。</p></aside></main>
+<script src="learner/walk.js"></script><script src="learner/talk.js"></script><script src="core/game.js"></script></body></html>

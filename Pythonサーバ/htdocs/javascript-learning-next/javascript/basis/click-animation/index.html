@@ -1,0 +1,203 @@
+<!DOCTYPE html><!--ShoDAN_GcHUNMFiyfose3--><html lang="ja"><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/javascript-learning-next/_next/static/css/8636333205133b65.css" data-precedence="next"/><link rel="preload" as="script" fetchPriority="low" href="/javascript-learning-next/_next/static/chunks/webpack-8b8d220dd9ff2974.js"/><script src="/javascript-learning-next/_next/static/chunks/4bd1b696-c023c6e3521b1417.js" async=""></script><script src="/javascript-learning-next/_next/static/chunks/255-0f7ef2f562903e9e.js" async=""></script><script src="/javascript-learning-next/_next/static/chunks/main-app-154801127fb894e0.js" async=""></script><script src="/javascript-learning-next/_next/static/chunks/619-ba102abea3e3d0e4.js" async=""></script><script src="/javascript-learning-next/_next/static/chunks/app/layout-66678c60049e14b4.js" async=""></script><script src="/javascript-learning-next/_next/static/chunks/app/javascript/basis/click-animation/page-be2aa68f056157ba.js" async=""></script><title>JavaScript 学習</title><meta name="description" content="JavaScript 学習教材"/><script src="/javascript-learning-next/_next/static/chunks/polyfills-42372ed130431b0a.js" noModule=""></script></head><body><div hidden=""><!--$--><!--/$--></div><header class="bg-yellow-400 p-4 font-bold"><a href="/javascript-learning-next/">JavaScript 学習</a> <a class="ml-6 text-sm" href="/javascript-learning-next/javascript/basis/">基礎一覧</a></header><main class="mx-auto max-w-7xl p-4"><section><p>クリックアニメーション</p><h1 class="text-2xl font-bold">class操作のサンプル切り替え</h1><div class="my-4 flex gap-2"><button class="rounded p-3 bg-blue-600 text-white">classの付け直し</button><button class="rounded p-3 bg-slate-200">classの付け外し</button></div><main class="min-h-screen bg-slate-100 px-4 py-8 text-slate-900 sm:px-6 lg:px-8"><div class="mx-auto max-w-5xl space-y-6"><header class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200"><p class="mb-2 text-sm font-semibold text-blue-600">React + Tailwind CSS</p><h1 class="text-2xl font-bold tracking-tight sm:text-3xl">iframe内でクリックアニメーションを実行するサンプル</h1><p class="mt-3 max-w-3xl leading-7 text-slate-600">ボタンをクリックすると、iframe内の青い四角形にCSSアニメーションが実行されます。 このページでは、アニメーションを何度も再実行するための<code class="mx-1 rounded bg-indigo-50 px-1.5 py-0.5 text-sm text-slate-800">classList.remove</code>、<code class="mx-1 rounded bg-indigo-50 px-1.5 py-0.5 text-sm text-slate-800">offsetWidth</code>、<code class="mx-1 rounded bg-indigo-50 px-1.5 py-0.5 text-sm text-slate-800">animationend</code>の役割を確認できます。</p></header><section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200"><div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"><div><h2 class="text-xl font-bold">実行結果</h2><p class="mt-1 text-sm text-slate-500">iframe内のボタンをクリックすると、青い四角形がバウンドします。 連続でクリックしても、アニメーションが最初から再生されます。</p></div></div><iframe title="クリックでアニメーション" sandbox="allow-scripts" srcDoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ja&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot; /&gt;
+  &lt;title&gt;クリックでアニメーション&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    .box {
+      width: 120px;
+      height: 120px;
+      background: #4f8cff;
+      border-radius: 12px;
+      margin: 40px 0;
+    }
+
+    /*
+      animateクラスが付いたときにCSSアニメーションが実行されます。
+      animationの時間が0.6sなので、約0.6秒後にanimationendイベントが発火します。
+    */
+    .animate {
+      animation: bounce 0.6s ease;
+    }
+
+    @keyframes bounce {
+      0% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-30px);
+      }
+      60% {
+        transform: translateY(10px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;button id=&quot;startButton&quot;&gt;アニメーション開始&lt;/button&gt;
+
+  &lt;div id=&quot;box&quot; class=&quot;box&quot;&gt;&lt;/div&gt;
+
+  &lt;script&gt;
+    const button = document.getElementById(&quot;startButton&quot;);
+    const box = document.getElementById(&quot;box&quot;);
+
+    button.addEventListener(&quot;click&quot;, () =&gt; {
+      /*
+        クリックされた瞬間に、いったんanimateクラスを外します。
+
+        これは、前回のアニメーションでanimateクラスが残っている場合や、
+        アニメーション中にもう一度クリックされた場合でも、
+        アニメーションを最初からやり直せるようにするためです。
+      */
+      box.classList.remove(&quot;animate&quot;);
+
+      /*
+        offsetWidthを読むことで、ブラウザに現在の状態を再計算させます。
+
+        これを入れないと、
+        「クラスを外す」
+        「すぐ同じクラスを付ける」
+        という処理がまとめて扱われてしまい、
+        アニメーションが再スタートしないことがあります。
+
+        void は、offsetWidthの値そのものは使わないことを表しています。
+      */
+      void box.offsetWidth;
+
+      /*
+        animateクラスを付け直します。
+
+        ここでCSSの animation: bounce 0.6s ease; が有効になり、
+        アニメーションが最初から再生されます。
+      */
+      box.classList.add(&quot;animate&quot;);
+    });
+
+    /*
+      animationend は、CSSアニメーションが最後まで再生された直後に発火します。
+
+      このサンプルでは、bounceアニメーションが0.6秒で終わるため、
+      animateクラスを付けてから約0.6秒後にこの処理が実行されます。
+    */
+    box.addEventListener(&quot;animationend&quot;, () =&gt; {
+      /*
+        アニメーション終了後にanimateクラスを外します。
+
+        これにより、要素は「アニメーションしていない状態」に戻ります。
+        次回クリックしたときに、また自然にanimateクラスを付け直せます。
+      */
+      box.classList.remove(&quot;animate&quot;);
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;" class="h-[260px] w-full rounded-xl border-2 border-slate-200 bg-white"></iframe></section><section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200"><h2 class="text-xl font-bold">解説</h2><div class="mt-5 grid gap-4 md:grid-cols-3"><article class="rounded-xl border border-slate-200 bg-slate-50 p-4"><h3 class="font-bold">1. クリック時にクラスを外す</h3><p class="mt-2 text-sm leading-6 text-slate-600">クリックされた瞬間に、まず<code class="mx-1 rounded bg-indigo-50 px-1.5 py-0.5 text-slate-800">animate</code>クラスを外します。これは、前回のアニメーションでクラスが残っている場合でも、 アニメーションを最初からやり直せるようにするためです。</p></article><article class="rounded-xl border border-slate-200 bg-slate-50 p-4"><h3 class="font-bold">2. offsetWidthで再計算させる</h3><p class="mt-2 text-sm leading-6 text-slate-600"><code class="rounded bg-indigo-50 px-1.5 py-0.5 text-slate-800">void box.offsetWidth</code>は、ブラウザに現在の状態をいったん確定させるための処理です。 これにより、「クラスを外した後に、もう一度付ける」という変化を ブラウザが正しく認識できます。</p></article><article class="rounded-xl border border-slate-200 bg-slate-50 p-4"><h3 class="font-bold">3. クラスを付け直して再生する</h3><p class="mt-2 text-sm leading-6 text-slate-600">その後、<code class="mx-1 rounded bg-indigo-50 px-1.5 py-0.5 text-slate-800">animate</code>クラスを付け直します。このクラスに設定された<code class="mx-1 rounded bg-indigo-50 px-1.5 py-0.5 text-slate-800">animation</code>が有効になり、CSSアニメーションが最初から再生されます。</p></article></div><div class="mt-5 grid gap-4 md:grid-cols-2"><article class="rounded-xl border border-blue-200 bg-blue-50 p-4"><h3 class="font-bold text-blue-900">クリック時の remove の役割</h3><p class="mt-2 text-sm leading-6 text-slate-700">クリック時の<code class="mx-1 rounded bg-white px-1.5 py-0.5 text-slate-800">box.classList.remove(&quot;animate&quot;)</code>は、アニメーションをその場でリセットするための処理です。 特に、アニメーション中にもう一度クリックされた場合に効果があります。</p></article><article class="rounded-xl border border-blue-200 bg-blue-50 p-4"><h3 class="font-bold text-blue-900">animationend側の remove の役割</h3><p class="mt-2 text-sm leading-6 text-slate-700"><code class="rounded bg-white px-1.5 py-0.5 text-slate-800">animationend</code>側の<code class="mx-1 rounded bg-white px-1.5 py-0.5 text-slate-800">remove</code>は、アニメーション終了後に状態をきれいに戻すための処理です。 CSSアニメーションが最後まで終わった直後に実行されます。</p></article></div><div class="mt-5 rounded-xl border-l-4 border-blue-500 bg-blue-50 p-4 text-sm leading-6 text-slate-700">クリック時の<code class="mx-1 rounded bg-white px-1.5 py-0.5 text-slate-800">remove</code>は「今すぐ再スタートするため」、<code class="mx-1 rounded bg-white px-1.5 py-0.5 text-slate-800">animationend</code>側の<code class="mx-1 rounded bg-white px-1.5 py-0.5 text-slate-800">remove</code>は「終わったあとに状態を戻すため」です。 目的が違うため、両方書いておくと連続クリックにも強い安定したコードになります。</div><a class="mt-5 inline-flex rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700" href="/javascript-learning-next/javascript/basis/click-animation/class-reattach/">classの付け直しを詳しく見る</a></section><section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200"><div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><h2 class="text-xl font-bold">iframeに入れているコード</h2><p class="mt-1 text-sm text-slate-500">React側では、このHTML文字列をiframeのsrcDocに渡しています。 コメントも含めて確認できます。</p></div><button type="button" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2">コードをコピー</button></div><pre class="max-h-[520px] overflow-auto rounded-xl bg-slate-950 p-4 text-sm leading-6 text-slate-100"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ja&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot; /&gt;
+  &lt;title&gt;クリックでアニメーション&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+
+    .box {
+      width: 120px;
+      height: 120px;
+      background: #4f8cff;
+      border-radius: 12px;
+      margin: 40px 0;
+    }
+
+    /*
+      animateクラスが付いたときにCSSアニメーションが実行されます。
+      animationの時間が0.6sなので、約0.6秒後にanimationendイベントが発火します。
+    */
+    .animate {
+      animation: bounce 0.6s ease;
+    }
+
+    @keyframes bounce {
+      0% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-30px);
+      }
+      60% {
+        transform: translateY(10px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;button id=&quot;startButton&quot;&gt;アニメーション開始&lt;/button&gt;
+
+  &lt;div id=&quot;box&quot; class=&quot;box&quot;&gt;&lt;/div&gt;
+
+  &lt;script&gt;
+    const button = document.getElementById(&quot;startButton&quot;);
+    const box = document.getElementById(&quot;box&quot;);
+
+    button.addEventListener(&quot;click&quot;, () =&gt; {
+      /*
+        クリックされた瞬間に、いったんanimateクラスを外します。
+
+        これは、前回のアニメーションでanimateクラスが残っている場合や、
+        アニメーション中にもう一度クリックされた場合でも、
+        アニメーションを最初からやり直せるようにするためです。
+      */
+      box.classList.remove(&quot;animate&quot;);
+
+      /*
+        offsetWidthを読むことで、ブラウザに現在の状態を再計算させます。
+
+        これを入れないと、
+        「クラスを外す」
+        「すぐ同じクラスを付ける」
+        という処理がまとめて扱われてしまい、
+        アニメーションが再スタートしないことがあります。
+
+        void は、offsetWidthの値そのものは使わないことを表しています。
+      */
+      void box.offsetWidth;
+
+      /*
+        animateクラスを付け直します。
+
+        ここでCSSの animation: bounce 0.6s ease; が有効になり、
+        アニメーションが最初から再生されます。
+      */
+      box.classList.add(&quot;animate&quot;);
+    });
+
+    /*
+      animationend は、CSSアニメーションが最後まで再生された直後に発火します。
+
+      このサンプルでは、bounceアニメーションが0.6秒で終わるため、
+      animateクラスを付けてから約0.6秒後にこの処理が実行されます。
+    */
+    box.addEventListener(&quot;animationend&quot;, () =&gt; {
+      /*
+        アニメーション終了後にanimateクラスを外します。
+
+        これにより、要素は「アニメーションしていない状態」に戻ります。
+        次回クリックしたときに、また自然にanimateクラスを付け直せます。
+      */
+      box.classList.remove(&quot;animate&quot;);
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre></section></div></main></section><!--$--><!--/$--></main><script src="/javascript-learning-next/_next/static/chunks/webpack-8b8d220dd9ff2974.js" id="_R_" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[2619,[\"619\",\"static/chunks/619-ba102abea3e3d0e4.js\",\"177\",\"static/chunks/app/layout-66678c60049e14b4.js\"],\"\"]\n3:I[9766,[],\"\"]\n4:I[8924,[],\"\"]\n5:I[1959,[],\"ClientPageRoot\"]\n6:I[2861,[\"619\",\"static/chunks/619-ba102abea3e3d0e4.js\",\"221\",\"static/chunks/app/javascript/basis/click-animation/page-be2aa68f056157ba.js\"],\"default\"]\n9:I[4431,[],\"OutletBoundary\"]\nb:I[5278,[],\"AsyncMetadataOutlet\"]\nd:I[4431,[],\"ViewportBoundary\"]\nf:I[4431,[],\"MetadataBoundary\"]\n10:\"$Sreact.suspense\"\n12:I[7150,[],\"\"]\n:HL[\"/javascript-learning-next/_next/static/css/8636333205133b65.css\",\"style\"]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"ShoDAN-GcHUNMFiyfose3\",\"p\":\"/javascript-learning-next\",\"c\":[\"\",\"javascript\",\"basis\",\"click-animation\",\"\"],\"i\":false,\"f\":[[[\"\",{\"children\":[\"javascript\",{\"children\":[\"basis\",{\"children\":[\"click-animation\",{\"children\":[\"__PAGE__\",{}]}]}]}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/javascript-learning-next/_next/static/css/8636333205133b65.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"ja\",\"children\":[\"$\",\"body\",null,{\"children\":[[\"$\",\"header\",null,{\"className\":\"bg-yellow-400 p-4 font-bold\",\"children\":[[\"$\",\"$L2\",null,{\"href\":\"/\",\"children\":\"JavaScript 学習\"}],\" \",[\"$\",\"$L2\",null,{\"className\":\"ml-6 text-sm\",\"href\":\"/javascript/basis\",\"children\":\"基礎一覧\"}]]}],[\"$\",\"main\",null,{\"className\":\"mx-auto max-w-7xl p-4\",\"children\":[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}]]}]}]]}],{\"children\":[\"javascript\",[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[\"basis\",[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[\"click-animation\",[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L4\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[\"__PAGE__\",[\"$\",\"$1\",\"c\",{\"children\":[[\"$\",\"$L5\",null,{\"Component\":\"$6\",\"searchParams\":{},\"params\":{},\"promises\":[\"$@7\",\"$@8\"]}],null,[\"$\",\"$L9\",null,{\"children\":[\"$La\",[\"$\",\"$Lb\",null,{\"promise\":\"$@c\"}]]}]]}],{},null,false]},null,false]},null,false]},null,false]},null,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[[\"$\",\"$Ld\",null,{\"children\":\"$Le\"}],null],[\"$\",\"$Lf\",null,{\"children\":[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$10\",null,{\"fallback\":null,\"children\":\"$L11\"}]}]}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$12\",[]],\"s\":false,\"S\":true}\n"])</script><script>self.__next_f.push([1,"7:{}\n8:\"$0:f:0:1:2:children:2:children:2:children:2:children:1:props:children:0:props:params\"\n"])</script><script>self.__next_f.push([1,"e:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\na:null\n"])</script><script>self.__next_f.push([1,"c:{\"metadata\":[[\"$\",\"title\",\"0\",{\"children\":\"JavaScript 学習\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"JavaScript 学習教材\"}]],\"error\":null,\"digest\":\"$undefined\"}\n"])</script><script>self.__next_f.push([1,"11:\"$c:metadata\"\n"])</script></body></html>

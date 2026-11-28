@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002Fjavascript\u002Fbasis\u002Fevent-register\u002F[methodId]"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()
